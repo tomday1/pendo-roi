@@ -572,7 +572,8 @@ export default function PendoValueCalculator() {
                   key={l.id}
                   style={{
                     display: "flex",
-                    alignItems: "center",
+                    alignItems: "left",
+                    textAlign: "left",
                     gap: 8,
                     fontSize: 14,
                     color: "#0f172a",
