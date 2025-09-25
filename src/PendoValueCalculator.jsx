@@ -1077,7 +1077,7 @@ export default function PendoValueCalculator() {
         )}
 
         <footer style={{ fontSize: 12, color: "#64748b", paddingTop: 16 }}>
-          Built for Pendo Sales Engineering. Save state persists locally in your browser.
+          Built by Tom Day. Feedback Welcome! Save state persists locally in your browser.
         </footer>
       </div>
     </div>
