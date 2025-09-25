@@ -6,7 +6,7 @@ const font = {
     "ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'",
 };
 const page = { minHeight: "100vh", background: "#f8fafc", padding: 24, ...font };
-const container = { maxWidth: 1200, margin: "0 auto" };
+const container = { maxWidth: 1800, margin: "0 auto" };
 const box = {
   border: "1px solid #e5e7eb",
   borderRadius: 16,
@@ -21,7 +21,7 @@ const inputCss = {
   border: "1px solid #e5e7eb",
   borderRadius: 12,
   padding: "10px 12px",
-  width: "100%",
+  width: "90%",
   background: "#fff",
 };
 const selectCss = { ...inputCss, width: 120 };
@@ -173,13 +173,13 @@ export default function PendoValueCalculator() {
   const onboardingSavings =
     onUsers * onHoursBase * onReduction * onHrCost * onRecap;
 
-  // 2) Product Team Efficiency (self-serve analytics)
+  // 2) Product Team Efficiency (Analytics) (self-serve analytics)
   const [pteCount, setPteCount] = useLocal("pendo.pte.count", 60);
   const [pteCost, setPteCost] = useLocal("pendo.pte.cost", 140000);
   const [ptePct, setPtePct] = useLocal("pendo.pte.pct", 0.05);
   const productEffSavings = pteCount * pteCost * ptePct;
 
-  // 3) Ticket Deflection at Scale (+ faster handling)
+  // 3) Ticket Deflection at Scale (Guides, Session Replay) (+ faster handling)
   const [tdBase, setTdBase] = useLocal("pendo.td.base", 20000);
   const [tdDeflect, setTdDeflect] = useLocal("pendo.td.deflect", 0.3);
   const [tdHrs, setTdHrs] = useLocal("pendo.td.hrs", 0.75);
@@ -195,7 +195,7 @@ export default function PendoValueCalculator() {
     tdAvoided * tdHrs * tdCostHr * tdRecap +
     tdRemain * tdHrs * tdTimeReduction * tdCostHr * tdRecap;
 
-  // 4) Trial→Paid / Upsell Uplift (PLG)
+  // 4) TTrial→Paid / Upsell Uplift (Guides, Analytics) (PLG)
   const [plgTrials, setPlgTrials] = useLocal("pendo.plg.trials", 10000);
   const [plgBaseConv, setPlgBaseConv] = useLocal("pendo.plg.baseConv", 0.2);
   const [plgUplift, setPlgUplift] = useLocal("pendo.plg.uplift", 0.1);
@@ -204,7 +204,7 @@ export default function PendoValueCalculator() {
   const trialUpliftRevenue =
     plgTrials * plgBaseConv * plgUplift * plgArpaMo * 12 * plgGM;
 
-  // 5) Expansion via Feature Adoption
+  // 5) Expansion via Feature Adoption(Guides, Analytics)
   const [expEligible, setExpEligible] = useLocal("pendo.exp.eligible", 20000);
   const [expPre, setExpPre] = useLocal("pendo.exp.pre", 0.1);
   const [expPost, setExpPost] = useLocal("pendo.exp.post", 0.2);
@@ -213,7 +213,7 @@ export default function PendoValueCalculator() {
   const expansionRevenue =
     expEligible * Math.max(0, expPost - expPre) * expPriceMo * 12 * expGM;
 
-  // 6) MTTR & Time-to-Reproduce Reduction (Replay)
+  // 6) MTTR & Time-to-Reproduce Reduction (Session Replay, Analytics, Jira) Reduction (Replay)
   const [mttrTickets, setMttrTickets] = useLocal("pendo.mttr.tickets", 8000);
   const [mttrBeforeH, setMttrBeforeH] = useLocal("pendo.mttr.beforeH", 2.25);
   const [mttrAfterH, setMttrAfterH] = useLocal("pendo.mttr.afterH", 0.25);
@@ -242,7 +242,7 @@ export default function PendoValueCalculator() {
   const [resCostHr, setResCostHr] = useLocal("pendo.res.costHr", 40);
   const researchSavings = resRecruits * resPanelCost + resHoursSaved * resCostHr;
 
-  // 8) Training Content Shift (formal → just-in-time)
+  // 8) Training Content Shift (Guides) (formal → just-in-time)
   const [trainHoursFormal, setTrainHoursFormal] = useLocal(
     "pendo.train.hoursFormal",
     10000
@@ -259,7 +259,7 @@ export default function PendoValueCalculator() {
   const trainingSavings =
     trainHoursFormal * trainReduction * trainCostHr + trainTravelAvoided;
 
-  // 9) Tool Consolidation (point tools → platform)
+  // 9) Tool Consolidation (Analytics, Guides, NPS & Surveys, Feedback, Session Replay) (point tools → platform)
   const [consRetiredCost, setConsRetiredCost] = useLocal(
     "pendo.cons.retiredCost",
     100000
@@ -274,7 +274,7 @@ export default function PendoValueCalculator() {
   );
   const consolidationSavings = consRetiredCost + consAdminHours * consAdminCostHr;
 
-  // 10) App Store Rating & Review Lift (mobile)
+  // 10) App Store Rating & Review Lift (Pendo Mobile, Guides) (mobile)
   const [appTraffic, setAppTraffic] = useLocal("pendo.app.traffic", 500000);
   const [appCvrBefore, setAppCvrBefore] = useLocal("pendo.app.cvrBefore", 0.05);
   const [appCvrAfter, setAppCvrAfter] = useLocal("pendo.app.cvrAfter", 0.055);
@@ -291,7 +291,7 @@ export default function PendoValueCalculator() {
   const churnRetainedRevenue =
     Math.max(0, crBase - crPost) * crAccts * crArpaYear * crGM;
 
-  // 12) Release Validation & Hotfix Avoidance
+  // 12) Release Validation & Hotfix Avoidance (Analytics, Session Replay, Guides)
   const [relHotfixesAvoided, setRelHotfixesAvoided] = useLocal(
     "pendo.rel.hotfixes",
     20
@@ -308,7 +308,7 @@ export default function PendoValueCalculator() {
   const releaseSavings =
     relHotfixesAvoided * relCostPerHotfix + relBugHoursSaved * relCostHr;
 
-  // 13) Feature Sunsetting & Maintenance Reduction
+  // 13) Feature Sunsetting & Maintenance Cost Reduction (Analytics, Feedback) Reduction
   const [sunEngHoursPerSprint, setSunEngHoursPerSprint] = useLocal(
     "pendo.sun.engHrsPerSprint",
     200
@@ -325,7 +325,7 @@ export default function PendoValueCalculator() {
   const sunsettingSavings =
     sunEngHoursPerSprint * sunSprintsPerYear * sunCostHr + sunInfraAvoided;
 
-  // 14) Compliance & Risk Mitigation (expected value)
+  // 14) Compliance & Risk Mitigation (Guides, Analytics) (expected value)
   const [compProb, setCompProb] = useLocal("pendo.comp.prob", 0.02);
   const [compImpact, setCompImpact] = useLocal("pendo.comp.impact", 500000);
   const [compReduction, setCompReduction] = useLocal(
@@ -334,7 +334,7 @@ export default function PendoValueCalculator() {
   );
   const complianceSavings = compProb * compImpact * compReduction;
 
-  // 15) Internal SaaS License Compliance (Employees/IT)
+  // 15) Internal SaaS License Compliance (Analytics) (Employees/IT)
   const [lcInactive, setLcInactive] = useLocal("pendo.lc.inactive", 1000);
   const [lcBuffer, setLcBuffer] = useLocal("pendo.lc.buffer", 100);
   const [lcCostSeat, setLcCostSeat] = useLocal("pendo.lc.costSeat", 300);
@@ -417,27 +417,27 @@ export default function PendoValueCalculator() {
   const [showSelector, setShowSelector] = useState(false);
 
   const leverListMeta = [
-    { id: "analytics", label: "Analytics — License Optimization" },
-    { id: "guides", label: "Guides — Email Deflection" },
-    { id: "feedback", label: "Feedback — Capture at Scale" },
-    { id: "surveys", label: "NPS/Surveys — Automate Collection" },
-    { id: "replay", label: "Session Replay — Faster Triage" },
-    { id: "onboarding", label: "Onboarding Acceleration (TTV)" },
-    { id: "productEff", label: "Product Team Efficiency" },
-    { id: "tickets", label: "Ticket Deflection at Scale" },
-    { id: "trialUplift", label: "Trial→Paid / Upsell Uplift" },
-    { id: "expansion", label: "Expansion via Feature Adoption" },
-    { id: "mttr", label: "MTTR & Time-to-Reproduce" },
-    { id: "research", label: "In-app Research / Recruitment" },
-    { id: "training", label: "Training Content Shift" },
-    { id: "consolidation", label: "Tool Consolidation" },
-    { id: "appStore", label: "App Store Rating & Review Lift" },
-    { id: "churn", label: "Churn Reduction (NPS→Playbooks)" },
-    { id: "release", label: "Release Validation & Hotfix Avoidance" },
-    { id: "sunsetting", label: "Feature Sunsetting & Maintenance" },
-    { id: "compliance", label: "Compliance & Risk Mitigation" },
-    { id: "licenseCompliance", label: "Internal SaaS License Compliance" },
-    { id: "commsCPM", label: "Per-Email Comms Cost Avoidance (CPM)" },
+    { id: "analytics", label: "License Optimization (Analytics)" },
+    { id: "guides", label: "Email Deflection (Guides)" },
+    { id: "feedback", label: "Capture at Scale (Feedback)" },
+    { id: "surveys", label: "Automate Collection (NPS & Surveys)" },
+    { id: "replay", label: "Faster Triage (Session Replay)" },
+    { id: "onboarding", label: "Onboarding Acceleration (Guides, Analytics)" },
+    { id: "productEff", label: "Product Team Efficiency (Analytics)" },
+    { id: "tickets", label: "Ticket Deflection (Guides, Session Replay)" },
+    { id: "trialUplift", label: "Trial→Paid / Upsell Uplift (Guides, Analytics)" },
+    { id: "expansion", label: "Expansion via Feature Adoption (Guides, Analytics)" },
+    { id: "mttr", label: "MTTR & Time-to-Reproduce Reduction (Session Replay, Analytics, Jira)" },
+    { id: "research", label: "Research/Recruitment Cost Avoidance (Guides, Surveys, Feedback)" },
+    { id: "training", label: "Training Content Shift (Guides)" },
+    { id: "consolidation", label: "Tool Consolidation (Analytics, Guides, NPS & Surveys, Feedback, Session Replay)" },
+    { id: "appStore", label: "App Store Rating & Review Lift (Pendo Mobile, Guides)" },
+    { id: "churn", label: "Churn Reduction from Detractor Workflows (NPS, Analytics)" },
+    { id: "release", label: "Release Validation & Hotfix Avoidance (Analytics, Session Replay, Guides)" },
+    { id: "sunsetting", label: "Feature Sunsetting & Maintenance Cost Reduction (Analytics, Feedback)" },
+    { id: "compliance", label: "Compliance & Risk Mitigation (Guides, Analytics)" },
+    { id: "licenseCompliance", label: "Internal SaaS License Compliance (Analytics)" },
+    { id: "commsCPM", label: "Per-Email Comms Cost Avoidance (Guides, Orchestrate)" },
   ];
 
   return (
@@ -452,8 +452,11 @@ export default function PendoValueCalculator() {
           }}
         >
           <div>
-            <h1 style={{ fontSize: 28, fontWeight: 600, letterSpacing: -0.3 }}>
-              Pendo Value & ROI Calculator
+            
+            {/* Title */}
+            <h1 style={{ fontSize: 28, fontWeight: 600, alignItems: "center", display: "flex", gap: 12, textAlign: "left" }}>
+              <img src="/pendo.png" alt="Pendo" style={{ height: 100, width: 100, objectFit: "contain" }} />
+             Value & ROI Calculator
             </h1>
             <p style={{ color: "#64748b", marginTop: 6 }}>
               Interactive model aligned to PBO levers: Increase Revenue, Cut
@@ -604,14 +607,14 @@ export default function PendoValueCalculator() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
               gap: 16,
               marginTop: 16,
             }}
           >
             {enabled.analytics && (
               <ModuleCard
-                title="Analytics — License Optimization"
+                title="License Optimization (Analytics)"
                 description="Rightsize analytics licenses and cross-charge accurately using Pendo usage + metadata."
                 value={analyticsSavings}
                 currency={currency}
@@ -640,7 +643,7 @@ export default function PendoValueCalculator() {
 
             {enabled.guides && (
               <ModuleCard
-                title="Guides — Email Deflection"
+                title="Email Deflection (Guides)"
                 description="Replace costly broadcast emails with in-app guidance."
                 value={guidesSavings}
                 currency={currency}
@@ -661,7 +664,7 @@ export default function PendoValueCalculator() {
 
             {enabled.feedback && (
               <ModuleCard
-                title="Feedback — Capture at Scale"
+                title="Capture at Scale (Feedback)"
                 description="Collect structured feedback with minutes instead of meetings."
                 value={feedbackSavings}
                 currency={currency}
@@ -682,7 +685,7 @@ export default function PendoValueCalculator() {
 
             {enabled.surveys && (
               <ModuleCard
-                title="NPS/Surveys — Automate Collection"
+                title="Automate Collection (NPS & Surveys)"
                 description="Automate sentiment capture and reduce manual survey ops."
                 value={surveySavings}
                 currency={currency}
@@ -703,7 +706,7 @@ export default function PendoValueCalculator() {
 
             {enabled.replay && (
               <ModuleCard
-                title="Session Replay — Faster Triage"
+                title="Faster Triage (Session Replay)"
                 description="Use replays to cut investigation time for bugs and issues."
                 value={replaySavings}
                 currency={currency}
@@ -732,7 +735,7 @@ export default function PendoValueCalculator() {
 
             {enabled.onboarding && (
               <ModuleCard
-                title="Onboarding Acceleration (Time-to-Value ↓)"
+                title="Onboarding Acceleration (Guides, Analytics)"
                 description="Cut training/onboarding time via in-app onboarding & help center."
                 value={onboardingSavings}
                 currency={currency}
@@ -747,7 +750,7 @@ export default function PendoValueCalculator() {
 
             {enabled.productEff && (
               <ModuleCard
-                title="Product Team Efficiency (Self-Serve Analytics)"
+                title="Product Team Efficiency (Analytics)"
                 description="Fewer BI/eng asks; faster decisions with self-serve analytics."
                 value={productEffSavings}
                 currency={currency}
@@ -760,7 +763,7 @@ export default function PendoValueCalculator() {
 
             {enabled.tickets && (
               <ModuleCard
-                title="Ticket Deflection at Scale"
+                title="Ticket Deflection (Guides, Session Replay)"
                 description="In-app help + replay reduces tickets and speeds handling."
                 value={ticketDeflectSavings}
                 currency={currency}
@@ -776,7 +779,7 @@ export default function PendoValueCalculator() {
 
             {enabled.trialUplift && (
               <ModuleCard
-                title="Trial→Paid / Upsell Uplift (PLG)"
+                title="Trial→Paid / Upsell Uplift - PLG (Guides, Analytics)"
                 description="Nudges lift conversion at moments of value; marginized ARR."
                 value={trialUpliftRevenue}
                 currency={currency}
@@ -791,7 +794,7 @@ export default function PendoValueCalculator() {
 
             {enabled.expansion && (
               <ModuleCard
-                title="Expansion via Feature Adoption"
+                title="Expansion via Feature Adoption (Guides, Analytics)"
                 description="Targeted education increases attach of premium features."
                 value={expansionRevenue}
                 currency={currency}
@@ -806,7 +809,7 @@ export default function PendoValueCalculator() {
 
             {enabled.mttr && (
               <ModuleCard
-                title="MTTR & Time-to-Reproduce Reduction (Replay)"
+                title="MTTR & Time-to-Reproduce Reduction (Session Replay, Analytics, Jira)"
                 description="Replay shortens investigation and protects revenue during incidents."
                 value={mttrTotalSavings}
                 currency={currency}
@@ -826,7 +829,7 @@ export default function PendoValueCalculator() {
 
             {enabled.research && (
               <ModuleCard
-                title="In-app Research / Recruitment"
+                title="Research/Recruitment Cost Avoidance (Guides, Surveys, Feedback)"
                 description="Slash panel fees and lead times using in-app recruitment."
                 value={researchSavings}
                 currency={currency}
@@ -840,7 +843,7 @@ export default function PendoValueCalculator() {
 
             {enabled.training && (
               <ModuleCard
-                title="Training Content Shift (Formal → Just-in-Time)"
+                title="Training Content Shift - Formal → Just-in-Time (Guides)"
                 description="Reduce formal training hours and travel/venue spend."
                 value={trainingSavings}
                 currency={currency}
@@ -854,7 +857,7 @@ export default function PendoValueCalculator() {
 
             {enabled.consolidation && (
               <ModuleCard
-                title="Tool Consolidation (Point Tools → Platform)"
+                title="Tool Consolidation (Analytics, Guides, NPS & Surveys, Feedback, Session Replay)"
                 description="Retire overlapping tools and reduce admin time."
                 value={consolidationSavings}
                 currency={currency}
@@ -867,7 +870,7 @@ export default function PendoValueCalculator() {
 
             {enabled.appStore && (
               <ModuleCard
-                title="App Store Rating & Review Lift"
+                title="App Store Rating & Review Lift (Pendo Mobile, Guides)"
                 description="Higher ratings improve conversion and installs."
                 value={appStoreRevenue}
                 currency={currency}
@@ -881,7 +884,7 @@ export default function PendoValueCalculator() {
 
             {enabled.churn && (
               <ModuleCard
-                title="Churn Reduction from Detractor Workflows"
+                title="Churn Reduction from Detractor Workflows (NPS, Analytics)"
                 description="Automated saves on detractors reduce attrition; marginized ARR retained."
                 value={churnRetainedRevenue}
                 currency={currency}
@@ -896,7 +899,7 @@ export default function PendoValueCalculator() {
 
             {enabled.release && (
               <ModuleCard
-                title="Release Validation & Hotfix Avoidance"
+                title="Release Validation & Hotfix Avoidance (Analytics, Session Replay, Guides)"
                 description="Pre/post checks and guides reduce hotfixes and bug time."
                 value={releaseSavings}
                 currency={currency}
@@ -910,7 +913,7 @@ export default function PendoValueCalculator() {
 
             {enabled.sunsetting && (
               <ModuleCard
-                title="Feature Sunsetting & Maintenance Cost Reduction"
+                title="Feature Sunsetting & Maintenance Cost Reduction (Analytics, Feedback)"
                 description="Retire low-use features to reduce tech debt and infra."
                 value={sunsettingSavings}
                 currency={currency}
@@ -924,7 +927,7 @@ export default function PendoValueCalculator() {
 
             {enabled.compliance && (
               <ModuleCard
-                title="Compliance & Risk Mitigation"
+                title="Compliance & Risk Mitigation (Guides, Analytics)"
                 description="Prevent risky actions and reduce incident probability."
                 value={complianceSavings}
                 currency={currency}
@@ -937,7 +940,7 @@ export default function PendoValueCalculator() {
 
             {enabled.licenseCompliance && (
               <ModuleCard
-                title="Internal SaaS License Compliance"
+                title="Internal SaaS License Compliance (Analytics)"
                 description="Right-size named seats based on usage analytics."
                 value={licenseComplianceSavings}
                 currency={currency}
@@ -950,7 +953,7 @@ export default function PendoValueCalculator() {
 
             {enabled.commsCPM && (
               <ModuleCard
-                title="Per-Email Comms Cost Avoidance (On-App Announcements)"
+                title="Per-Email Comms Cost Avoidance (In-App Announcements)"
                 description="Shift email blasts to in-app announcements."
                 value={commsCpmSavings}
                 currency={currency}
@@ -1007,7 +1010,7 @@ export default function PendoValueCalculator() {
             <div style={{ height: 1, background: "#e5e7eb", margin: "16px 0" }} />
 
             <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>
-              Additional Global Assumptions
+              Hourly Cost
             </div>
             <div style={{ color: "#64748b", fontSize: 13, marginBottom: 8 }}>
               These are used as sensible defaults for hourly cost fields in modules (you can override inside each card).
@@ -1037,7 +1040,7 @@ export default function PendoValueCalculator() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(600px, 1fr))",
               gap: 16,
               marginTop: 16,
             }}
@@ -1083,14 +1086,14 @@ export default function PendoValueCalculator() {
 function ModuleCard({ title, description, value, children, currency }) {
   return (
     <div style={box}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ fontSize: 18, fontWeight: 600 }}>{title}</div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left" }}>
+        <div style={{ fontSize: 14, fontWeight: 600 }}>{title}</div>
         <div style={{ fontSize: 14, fontWeight: 600, color: value >= 0 ? "#047857" : "#be123c" }}>
           {value >= 0 ? "+" : ""}
           {currencyFmt(value, currency)}
         </div>
       </div>
-      <p style={{ color: "#64748b", fontSize: 14, marginTop: 6 }}>{description}</p>
+      <p style={{ color: "#64748b", fontSize: 10, marginTop: 6, textAlign: "left" }}>{description}</p>
       <div style={{ display: "grid", gap: 12, marginTop: 12 }}>{children}</div>
     </div>
   );
