@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
+import ExportMenu from "./ExportMenu";
 
 // --- Tiny style system (no external UI libs) ---
 const font = {
@@ -444,6 +445,33 @@ export default function PendoValueCalculator() {
     { id: "commsCPM", label: "Per-Email Comms Cost Avoidance (Guides, Orchestrate)" },
   ];
 
+  // Build export snapshot for current tab
+  const buildSnapshot = () => {
+    const enabledLevers = leverListMeta
+      .filter((l) => enabled[l.id])
+      .map((l) => ({ label: l.label, value: leverValues[l.id] }));
+
+    return {
+      tab,
+      currency,
+      kpis: {
+        totalBenefits,
+        pendoAnnualCost,
+        netValue,
+        roiPct: roi * 100,
+        paybackMonths: Number.isFinite(paybackMonths) ? paybackMonths : null,
+      },
+      assumptions: {
+        pmSalary,
+        workDays,
+        hoursPerDay,
+        costPerMinute: effectiveCostPerMinute, // effective $/min in use
+        effectiveHourly: Math.round(effectiveCostPerMinute * 60),
+      },
+      levers: enabledLevers,
+    };
+  };
+
   return (
     <div style={page}>
       <div style={container}>
@@ -502,6 +530,14 @@ export default function PendoValueCalculator() {
             >
               ⚙️
             </button>
+
+            <ExportMenu
+              buildSnapshot={buildSnapshot}
+              tab={tab}
+              inputCss={inputCss}
+              sectionSelectors={["#tab-levers", "#tab-assumptions", "#tab-breakdown"]}
+            />
+
           </div>
         </header>
 
@@ -622,6 +658,7 @@ export default function PendoValueCalculator() {
 
         {tab === "levers" && (
           <div
+            id="tab-levers"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
@@ -1072,7 +1109,7 @@ export default function PendoValueCalculator() {
         )}
 
         {tab === "assumptions" && (
-          <div style={{ ...box, marginTop: 16 }}>
+          <div id="tab-assumptions" style={{ ...box, marginTop: 16 }}>
             <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>
               Workforce Cost Basis
             </div>
@@ -1133,6 +1170,7 @@ export default function PendoValueCalculator() {
 
         {tab === "summary" && (
           <div
+            id="tab-breakdown"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(600px, 1fr))",
