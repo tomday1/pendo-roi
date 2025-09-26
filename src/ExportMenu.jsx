@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-/** Minimal, standalone helpers kept in this file */
 const currencyFmt = (n, currency) =>
   new Intl.NumberFormat(undefined, { style: "currency", currency }).format(
     Number.isFinite(n) ? n : 0
@@ -22,7 +21,6 @@ const toCSV = (rows) => {
   return rows.map((r) => r.map(esc).join(",")).join("\n");
 };
 
-/** Lazy-loaders for tiny, CDN-hosted libs (no bundler changes needed) */
 const ensureHtml2Canvas = async () => {
   if (window.html2canvas) return window.html2canvas;
   await new Promise((res, rej) => {
@@ -47,76 +45,136 @@ const ensureXLSX = async () => {
   return window.XLSX;
 };
 
+const ensureJSPDF = async () => {
+  if (window.jspdf?.jsPDF) return window.jspdf.jsPDF;
+  await new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js";
+    s.onload = res;
+    s.onerror = rej;
+    document.head.appendChild(s);
+  });
+  return window.jspdf.jsPDF;
+};
+
+// preserve aspect ratio, fit into a box
+function fitBox(imgW, imgH, boxW, boxH) {
+  const r = imgW / imgH;
+  let w = boxW, h = w / r;
+  if (h > boxH) {
+    h = boxH;
+    w = h * r;
+  }
+  const x = (boxW - w) / 2;
+  const y = (boxH - h) / 2;
+  return { w, h, x, y };
+}
+
 export default function ExportMenu({
-  buildSnapshot,         // () => { tab, currency, kpis, assumptions, levers[] }
-  tab,                   // current tab id string
-  inputCss,              // styling token from parent
-  sectionSelectors = [], // CSS selectors for the 3 tab containers, in order: [levers, assumptions, breakdown]
+  buildSnapshot,
+  tab,
+  inputCss,
+  sectionSelectors = [],
+  switchToTab,
+  tabIds = ["levers", "assumptions", "summary"],
+  headerSelector = "#app-header",
 }) {
   const [open, setOpen] = useState(false);
 
-  /** ---- IMAGE EXPORTS: a true PICTURE of each tab ---- */
-  const captureSectionsToCanvases = async () => {
+  const waitForPaint = () =>
+    new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve))
+    );
+
+  // capture header and tabs
+  const captureAll = async () => {
     const html2canvas = await ensureHtml2Canvas();
-    const canvases = [];
-    for (const sel of sectionSelectors) {
+    const captures = { header: null, pages: [] };
+
+    // clone header but hide right-side controls
+    const headerEl = document.querySelector(headerSelector);
+    if (headerEl) {
+      const clone = headerEl.cloneNode(true);
+      const rightSide = clone.querySelector("div[style*='flex'][style*='gap']");
+      if (rightSide) rightSide.style.display = "none";
+      document.body.appendChild(clone);
+      clone.style.position = "absolute";
+      clone.style.left = "-9999px";
+      captures.header = await html2canvas(clone, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+      });
+      clone.remove();
+    }
+
+    for (let i = 0; i < tabIds.length; i++) {
+      const id = tabIds[i];
+      const sel = sectionSelectors[i];
+
+      await switchToTab(id);
+      await waitForPaint();
+
       const el = document.querySelector(sel);
       if (!el) continue;
-      // temporarily ensure it's visible height-wise for capture (in case some tabs are hidden)
-      const hadHidden = el.style.display === "none";
-      if (hadHidden) el.style.display = "block";
+
+      el.scrollIntoView({ block: "start" });
+      await waitForPaint();
+
       const canvas = await html2canvas(el, {
         scale: 2,
         backgroundColor: "#ffffff",
         useCORS: true,
-        windowWidth: document.documentElement.scrollWidth,
       });
-      if (hadHidden) el.style.display = "none";
-      canvases.push({ selector: sel, canvas });
+      captures.pages.push({ tabId: id, canvas });
     }
-    return canvases;
+
+    await switchToTab(tab);
+    await waitForPaint();
+    return captures;
   };
 
-  // PNG: download one PNG per tab (one picture per tab)
   const exportPNGs = async () => {
-    const canvases = await captureSectionsToCanvases();
-    const names = ["levers", "assumptions", "breakdown"];
-    canvases.forEach((c, i) =>
-      c.canvas.toBlob((blob) => blob && downloadBlob(blob, `pendo-${names[i] || i + 1}.png`))
+    const { pages } = await captureAll();
+    pages.forEach(({ tabId, canvas }) =>
+      canvas.toBlob((blob) => blob && downloadBlob(blob, `pendo-${tabId}.png`))
     );
   };
 
-  // PDF: open a window with each tab image on its own page; user uses “Save as PDF”
   const exportPDF = async () => {
-    const canvases = await captureSectionsToCanvases();
-    const w = window.open("", "_blank", "noopener,noreferrer,width=1000,height=800");
-    if (!w) return;
-    const css = `
-      <style>
-        @page { size: A4; margin: 16mm; }
-        body { font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
-        .page { page-break-after: always; text-align: center; }
-        img { max-width: 100%; height: auto; }
-        h2 { font-size: 14px; color: #64748b; margin: 0 0 8px; font-weight: 500; }
-      </style>`;
-    const names = ["Levers", "Assumptions", "Breakdown"];
-    const html = canvases
-      .map((c, i) => {
-        const dataURL = c.canvas.toDataURL("image/png");
-        return `<div class="page">
-          <h2>${names[i] || `Section ${i + 1}`}</h2>
-          <img src="${dataURL}" />
-        </div>`;
-      })
-      .join("");
-    w.document.write(`<!doctype html><html><head><meta charset="utf-8">${css}</head><body>${html}
-      <script>window.onload = () => setTimeout(() => window.print(), 200);</script>
-    </body></html>`);
-    w.document.close();
+    const jsPDF = await ensureJSPDF();
+    const { header, pages } = await captureAll();
+    if (!pages.length) return;
+
+    const firstLandscape = pages[0].canvas.width > pages[0].canvas.height;
+    const doc = new jsPDF({
+      unit: "mm",
+      format: "a4",
+      orientation: firstLandscape ? "l" : "p",
+    });
+
+    pages.forEach(({ canvas }, idx) => {
+      if (idx > 0) {
+        const landscape = canvas.width > canvas.height;
+        doc.addPage("a4", landscape ? "l" : "p");
+      }
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      let yCursor = 6;
+
+      if (header) {
+        const hFit = fitBox(header.width, header.height, pageW - 12, pageH * 0.2);
+        doc.addImage(header.toDataURL("image/png"), "PNG", hFit.x + 6, yCursor, hFit.w, hFit.h, undefined, "SLOW");
+        yCursor += hFit.h + 4;
+      }
+
+      const fit = fitBox(canvas.width, canvas.height, pageW - 12, pageH - yCursor - 6);
+      doc.addImage(canvas.toDataURL("image/png"), "PNG", fit.x + 6, yCursor, fit.w, fit.h, undefined, "SLOW");
+    });
+
+    doc.save("pendo-roi.pdf");
   };
 
-  /** ---- SPREADSHEET EXPORTS: structured data for Sheets/Excel ---- */
-  // CSV fallback (single sheet) — still useful if user wants CSV
   const exportCSV = () => {
     const snap = buildSnapshot();
     const leverRows = [
@@ -135,22 +193,21 @@ export default function ExportMenu({
       ["Exported Tab", snap.tab],
       ["Currency", snap.currency],
       [],
-      ["— Levers —"], ...leverRows, [], ["— Breakdown —"], ...breakdownRows,
+      ["— Levers —"], ...leverRows,
+      [],
+      ["— Breakdown —"], ...breakdownRows,
     ];
     const blob = new Blob([toCSV(rows)], { type: "text/csv;charset=utf-8" });
     downloadBlob(blob, `pendo-data-${snap.tab}.csv`);
   };
 
-  // XLSX workbook with one sheet per section: Levers, Breakdown
   const exportXLSX = async () => {
     const XLSX = await ensureXLSX();
     const snap = buildSnapshot();
-
     const leversAOA = [
       ["Lever", "Annual Value"],
       ...snap.levers.map((l) => [l.label, Number((l.value || 0).toFixed(2))]),
     ];
-
     const breakdownAOA = [
       ["KPI", "Value"],
       ["Total Benefits", Number((snap.kpis.totalBenefits || 0).toFixed(2))],
@@ -159,14 +216,9 @@ export default function ExportMenu({
       ["ROI %", Number((snap.kpis.roiPct || 0).toFixed(2))],
       ["Payback (months)", snap.kpis.paybackMonths == null ? "" : Number(snap.kpis.paybackMonths.toFixed(2))],
     ];
-
     const wb = XLSX.utils.book_new();
-    const wsLevers = XLSX.utils.aoa_to_sheet(leversAOA);
-    const wsBreakdown = XLSX.utils.aoa_to_sheet(breakdownAOA);
-
-    XLSX.utils.book_append_sheet(wb, wsLevers, "Levers");
-    XLSX.utils.book_append_sheet(wb, wsBreakdown, "Breakdown");
-
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(leversAOA), "Levers");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(breakdownAOA), "Breakdown");
     XLSX.writeFile(wb, `pendo-roi-${snap.tab}.xlsx`);
   };
 
@@ -184,27 +236,30 @@ export default function ExportMenu({
       {open && (
         <div
           style={{
-            position: "absolute", right: 0, top: 44, zIndex: 40,
-            background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
-            minWidth: 240, padding: 8
+            position: "absolute",
+            right: 0,
+            top: 44,
+            zIndex: 40,
+            background: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 12,
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+            minWidth: 240,
+            padding: 8,
           }}
           onMouseLeave={() => setOpen(false)}
         >
-          <div style={{ padding: "6px 10px", fontSize: 12, color: "#64748b" }}>
-            Export (pictures = exact tab screenshots)
-          </div>
           <button onClick={() => { setOpen(false); exportPDF(); }} style={{ ...inputCss, width: "100%", marginTop: 6, cursor: "pointer" }}>
-            Export as PDF (pictures)
+            Export as PDF
           </button>
           <button onClick={() => { setOpen(false); exportPNGs(); }} style={{ ...inputCss, width: "100%", marginTop: 6, cursor: "pointer" }}>
             Export as PNGs (one per tab)
           </button>
-          <div style={{ height: 8 }} />
           <button onClick={() => { setOpen(false); exportXLSX(); }} style={{ ...inputCss, width: "100%", marginTop: 6, cursor: "pointer" }}>
-            Export to Excel (Levers & Breakdown)
+            Export to Excel
           </button>
           <button onClick={() => { setOpen(false); exportCSV(); }} style={{ ...inputCss, width: "100%", marginTop: 6, cursor: "pointer" }}>
-            Export CSV (fallback)
+            Export CSV
           </button>
         </div>
       )}

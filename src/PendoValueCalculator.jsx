@@ -471,11 +471,21 @@ export default function PendoValueCalculator() {
       levers: enabledLevers,
     };
   };
+  
+  // Switch tabs and wait for the DOM to paint (used by export)
+  const switchToTab = async (id) => {
+    if (tab !== id) setTab(id);
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve))
+    );
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
 
   return (
     <div style={page}>
       <div style={container}>
         <header
+          id="app-header"
           style={{
             ...hstack,
             justifyContent: "space-between",
@@ -536,6 +546,8 @@ export default function PendoValueCalculator() {
               tab={tab}
               inputCss={inputCss}
               sectionSelectors={["#tab-levers", "#tab-assumptions", "#tab-breakdown"]}
+              tabIds={["levers", "assumptions", "summary"]}
+              switchToTab={switchToTab}
             />
 
           </div>
