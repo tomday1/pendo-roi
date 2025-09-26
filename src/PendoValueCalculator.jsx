@@ -195,7 +195,7 @@ export default function PendoValueCalculator() {
     tdAvoided * tdHrs * tdCostHr * tdRecap +
     tdRemain * tdHrs * tdTimeReduction * tdCostHr * tdRecap;
 
-  // 4) TTrial→Paid / Upsell Uplift (Guides, Analytics) (PLG)
+  // 4) Trial→Paid / Upsell Uplift (Guides, Analytics) (PLG)
   const [plgTrials, setPlgTrials] = useLocal("pendo.plg.trials", 10000);
   const [plgBaseConv, setPlgBaseConv] = useLocal("pendo.plg.baseConv", 0.2);
   const [plgUplift, setPlgUplift] = useLocal("pendo.plg.uplift", 0.1);
@@ -213,7 +213,7 @@ export default function PendoValueCalculator() {
   const expansionRevenue =
     expEligible * Math.max(0, expPost - expPre) * expPriceMo * 12 * expGM;
 
-  // 6) MTTR & Time-to-Reproduce Reduction (Session Replay, Analytics, Jira) Reduction (Replay)
+  // 6) MTTR & Time-to-Reproduce Reduction
   const [mttrTickets, setMttrTickets] = useLocal("pendo.mttr.tickets", 8000);
   const [mttrBeforeH, setMttrBeforeH] = useLocal("pendo.mttr.beforeH", 2.25);
   const [mttrAfterH, setMttrAfterH] = useLocal("pendo.mttr.afterH", 0.25);
@@ -242,7 +242,7 @@ export default function PendoValueCalculator() {
   const [resCostHr, setResCostHr] = useLocal("pendo.res.costHr", 40);
   const researchSavings = resRecruits * resPanelCost + resHoursSaved * resCostHr;
 
-  // 8) Training Content Shift (Guides) (formal → just-in-time)
+  // 8) Training Content Shift (Guides)
   const [trainHoursFormal, setTrainHoursFormal] = useLocal(
     "pendo.train.hoursFormal",
     10000
@@ -259,7 +259,7 @@ export default function PendoValueCalculator() {
   const trainingSavings =
     trainHoursFormal * trainReduction * trainCostHr + trainTravelAvoided;
 
-  // 9) Tool Consolidation (Analytics, Guides, NPS & Surveys, Feedback, Session Replay) (point tools → platform)
+  // 9) Tool Consolidation
   const [consRetiredCost, setConsRetiredCost] = useLocal(
     "pendo.cons.retiredCost",
     100000
@@ -274,7 +274,7 @@ export default function PendoValueCalculator() {
   );
   const consolidationSavings = consRetiredCost + consAdminHours * consAdminCostHr;
 
-  // 10) App Store Rating & Review Lift (Pendo Mobile, Guides) (mobile)
+  // 10) App Store Rating & Review Lift
   const [appTraffic, setAppTraffic] = useLocal("pendo.app.traffic", 500000);
   const [appCvrBefore, setAppCvrBefore] = useLocal("pendo.app.cvrBefore", 0.05);
   const [appCvrAfter, setAppCvrAfter] = useLocal("pendo.app.cvrAfter", 0.055);
@@ -282,7 +282,7 @@ export default function PendoValueCalculator() {
   const appStoreRevenue =
     Math.max(0, appCvrAfter - appCvrBefore) * appTraffic * appArpuYear;
 
-  // 11) Churn Reduction from Detractor Workflows
+  // 11) Churn Reduction
   const [crAccts, setCrAccts] = useLocal("pendo.cr.accts", 2000);
   const [crBase, setCrBase] = useLocal("pendo.cr.base", 0.1);
   const [crPost, setCrPost] = useLocal("pendo.cr.post", 0.08);
@@ -291,7 +291,7 @@ export default function PendoValueCalculator() {
   const churnRetainedRevenue =
     Math.max(0, crBase - crPost) * crAccts * crArpaYear * crGM;
 
-  // 12) Release Validation & Hotfix Avoidance (Analytics, Session Replay, Guides)
+  // 12) Release Validation & Hotfix Avoidance
   const [relHotfixesAvoided, setRelHotfixesAvoided] = useLocal(
     "pendo.rel.hotfixes",
     20
@@ -308,7 +308,7 @@ export default function PendoValueCalculator() {
   const releaseSavings =
     relHotfixesAvoided * relCostPerHotfix + relBugHoursSaved * relCostHr;
 
-  // 13) Feature Sunsetting & Maintenance Cost Reduction (Analytics, Feedback) Reduction
+  // 13) Feature Sunsetting & Maintenance Cost Reduction
   const [sunEngHoursPerSprint, setSunEngHoursPerSprint] = useLocal(
     "pendo.sun.engHrsPerSprint",
     200
@@ -325,7 +325,7 @@ export default function PendoValueCalculator() {
   const sunsettingSavings =
     sunEngHoursPerSprint * sunSprintsPerYear * sunCostHr + sunInfraAvoided;
 
-  // 14) Compliance & Risk Mitigation (Guides, Analytics) (expected value)
+  // 14) Compliance & Risk Mitigation (expected value)
   const [compProb, setCompProb] = useLocal("pendo.comp.prob", 0.02);
   const [compImpact, setCompImpact] = useLocal("pendo.comp.impact", 500000);
   const [compReduction, setCompReduction] = useLocal(
@@ -334,7 +334,7 @@ export default function PendoValueCalculator() {
   );
   const complianceSavings = compProb * compImpact * compReduction;
 
-  // 15) Internal SaaS License Compliance (Analytics) (Employees/IT)
+  // 15) Internal SaaS License Compliance
   const [lcInactive, setLcInactive] = useLocal("pendo.lc.inactive", 1000);
   const [lcBuffer, setLcBuffer] = useLocal("pendo.lc.buffer", 100);
   const [lcCostSeat, setLcCostSeat] = useLocal("pendo.lc.costSeat", 300);
@@ -416,6 +416,10 @@ export default function PendoValueCalculator() {
   const [tab, setTab] = useState("levers");
   const [showSelector, setShowSelector] = useState(false);
 
+  // --- Header config (NEW) ---
+  const [logoUrl, setLogoUrl] = useLocal("pendo.logoUrl", "");
+  const [showSettings, setShowSettings] = useState(false);
+
   const leverListMeta = [
     { id: "analytics", label: "License Optimization (Analytics)" },
     { id: "guides", label: "Email Deflection (Guides)" },
@@ -452,11 +456,13 @@ export default function PendoValueCalculator() {
           }}
         >
           <div>
-            
-            {/* Title */}
+            {/* Title (UPDATED with optional custom logo) */}
             <h1 style={{ fontSize: 28, fontWeight: 600, alignItems: "center", display: "flex", gap: 12, textAlign: "left" }}>
+              {logoUrl ? (
+                <img src={logoUrl} alt="Customer logo" style={{ height: 100, width: 100, objectFit: "contain" }} />
+              ) : null}
               <img src="/pendo.png" alt="Pendo" style={{ height: 100, width: 100, objectFit: "contain" }} />
-             Value & ROI Calculator
+              Value & ROI Calculator
             </h1>
             <p style={{ color: "#64748b", marginTop: 6 }}>
               Interactive model aligned to PBO levers: Increase Revenue, Cut
@@ -485,6 +491,16 @@ export default function PendoValueCalculator() {
               style={{ ...inputCss, width: 120, cursor: "pointer" }}
             >
               Reset
+            </button>
+
+            {/* Settings cog (NEW) */}
+            <button
+              onClick={() => setShowSettings(true)}
+              aria-label="Settings"
+              title="Settings"
+              style={{ ...inputCss, width: 44, cursor: "pointer", display: "grid", placeItems: "center" }}
+            >
+              ⚙️
             </button>
           </div>
         </header>
@@ -619,6 +635,14 @@ export default function PendoValueCalculator() {
                 description="Rightsize analytics licenses and cross-charge accurately using Pendo usage + metadata."
                 value={analyticsSavings}
                 currency={currency}
+                info={
+                  <>
+                    <div><code>Analytics savings = users × (cost/user/year) × optimization%</code></div>
+                    <div style={{ marginTop: 6 }}>
+                      Where <em>cost/user/year</em> = <code>{licenseCostPerUserMo} × 12</code> and optimization% = <code>{(licenseOptPct*100).toFixed(0)}%</code>.
+                    </div>
+                  </>
+                }
               >
                 <NumInput
                   label="Users with analytics licenses"
@@ -648,6 +672,7 @@ export default function PendoValueCalculator() {
                 description="Replace costly broadcast emails with in-app guidance."
                 value={guidesSavings}
                 currency={currency}
+                info={<div><code>Guides savings = emails shifted × cost/email</code></div>}
               >
                 <NumInput
                   label="# of emails shifted to Guides / yr"
@@ -669,6 +694,7 @@ export default function PendoValueCalculator() {
                 description="Collect structured feedback with minutes instead of meetings."
                 value={feedbackSavings}
                 currency={currency}
+                info={<div><code>Feedback savings = feedback count × saving per feedback</code></div>}
               >
                 <NumInput
                   label="# of feedback items / yr"
@@ -690,6 +716,7 @@ export default function PendoValueCalculator() {
                 description="Automate sentiment capture and reduce manual survey ops."
                 value={surveySavings}
                 currency={currency}
+                info={<div><code>Survey savings = surveys via Pendo × saving per survey</code></div>}
               >
                 <NumInput
                   label="# of surveys via Pendo / yr"
@@ -711,6 +738,12 @@ export default function PendoValueCalculator() {
                 description="Use replays to cut investigation time for bugs and issues."
                 value={replaySavings}
                 currency={currency}
+                info={
+                  <div>
+                    <div><code>Replay savings = total replays × useful% × saving per useful replay</code></div>
+                    <div style={{ marginTop: 6 }}><em>useful%</em> here is {(replayUsefulPct*100).toFixed(0)}%.</div>
+                  </div>
+                }
               >
                 <NumInput
                   label="Total replays captured / yr"
@@ -740,6 +773,14 @@ export default function PendoValueCalculator() {
                 description="Cut training/onboarding time via in-app onboarding & help center."
                 value={onboardingSavings}
                 currency={currency}
+                info={
+                  <>
+                    <div><code>Onboarding savings = users × baseline hours × reduction% × hourly cost × productivity recapture%</code></div>
+                    <div style={{ marginTop: 6 }}>
+                      Using: users={onUsers}, baseline hours={onHoursBase}, reduction={(onReduction*100).toFixed(0)}%, hourly cost≈{currencyFmt(onHrCost, currency)}, recapture={(onRecap*100).toFixed(0)}%.
+                    </div>
+                  </>
+                }
               >
                 <NumInput label="Users onboarded / yr" value={onUsers} onChange={setOnUsers} />
                 <NumInput label="Hours onboarding (baseline)" value={onHoursBase} onChange={setOnHoursBase} step={0.25} />
@@ -755,6 +796,7 @@ export default function PendoValueCalculator() {
                 description="Fewer BI/eng asks; faster decisions with self-serve analytics."
                 value={productEffSavings}
                 currency={currency}
+                info={<div><code>Efficiency savings = roles × fully burdened cost/yr × efficiency uplift%</code></div>}
               >
                 <NumInput label="# of PM/Design/Analyst roles" value={pteCount} onChange={setPteCount} />
                 <CurrencyInput label="Fully burdened cost per person / yr" value={pteCost} onChange={setPteCost} currency={currency} />
@@ -768,6 +810,13 @@ export default function PendoValueCalculator() {
                 description="In-app help + replay reduces tickets and speeds handling."
                 value={ticketDeflectSavings}
                 currency={currency}
+                info={
+                  <>
+                    <div><code>Deflection savings = avoided tickets × hrs/ticket × $/hr × recapture%</code></div>
+                    <div><code>Faster handling savings = remaining tickets × hrs/ticket × time reduction% × $/hr × recapture%</code></div>
+                    <div style={{ marginTop: 6 }}>Avoided = baseline × deflection%.</div>
+                  </>
+                }
               >
                 <NumInput label="Tickets per year (baseline)" value={tdBase} onChange={setTdBase} />
                 <RangeInput label={`Deflection rate (${pctFmt(tdDeflect)})`} value={tdDeflect} onChange={setTdDeflect} />
@@ -784,6 +833,11 @@ export default function PendoValueCalculator() {
                 description="Nudges lift conversion at moments of value; marginized ARR."
                 value={trialUpliftRevenue}
                 currency={currency}
+                info={
+                  <div>
+                    <code>Revenue = trials × base conversion% × uplift% × ARPA/mo × 12 × GM%</code>
+                  </div>
+                }
               >
                 <NumInput label="# of trials" value={plgTrials} onChange={setPlgTrials} />
                 <RangeInput label={`Base conversion (${pctFmt(plgBaseConv)})`} value={plgBaseConv} onChange={setPlgBaseConv} max={1} />
@@ -799,6 +853,11 @@ export default function PendoValueCalculator() {
                 description="Targeted education increases attach of premium features."
                 value={expansionRevenue}
                 currency={currency}
+                info={
+                  <div>
+                    <code>Revenue = eligible users × (post - pre adoption) × price/mo × 12 × GM%</code>
+                  </div>
+                }
               >
                 <NumInput label="Users eligible" value={expEligible} onChange={setExpEligible} />
                 <RangeInput label={`Adoption pre (${pctFmt(expPre)})`} value={expPre} onChange={setExpPre} max={1} />
@@ -814,6 +873,12 @@ export default function PendoValueCalculator() {
                 description="Replay shortens investigation and protects revenue during incidents."
                 value={mttrTotalSavings}
                 currency={currency}
+                info={
+                  <>
+                    <div><code>Ops savings = (hrs before - hrs after) × tickets × $/hr × recapture%</code></div>
+                    <div><code>Revenue protected = (MTTR before - after) × incidents × $/hr at risk</code></div>
+                  </>
+                }
               >
                 <NumInput label="# of tickets" value={mttrTickets} onChange={setMttrTickets} />
                 <NumInput label="Hours before" value={mttrBeforeH} onChange={setMttrBeforeH} step={0.25} />
@@ -834,6 +899,11 @@ export default function PendoValueCalculator() {
                 description="Slash panel fees and lead times using in-app recruitment."
                 value={researchSavings}
                 currency={currency}
+                info={
+                  <div>
+                    <code>Research savings = recruits × panel cost + research hours saved × $/hr</code>
+                  </div>
+                }
               >
                 <NumInput label="# of recruits" value={resRecruits} onChange={setResRecruits} />
                 <CurrencyInput label="Panel cost per recruit" value={resPanelCost} onChange={setResPanelCost} currency={currency} />
@@ -848,6 +918,11 @@ export default function PendoValueCalculator() {
                 description="Reduce formal training hours and travel/venue spend."
                 value={trainingSavings}
                 currency={currency}
+                info={
+                  <div>
+                    <code>Training savings = formal hours × reduction% × $/hr + travel/venue avoided</code>
+                  </div>
+                }
               >
                 <NumInput label="Formal training hours / yr" value={trainHoursFormal} onChange={setTrainHoursFormal} />
                 <RangeInput label={`Hours reduced (${pctFmt(trainReduction)})`} value={trainReduction} onChange={setTrainReduction} max={1} />
@@ -862,6 +937,7 @@ export default function PendoValueCalculator() {
                 description="Retire overlapping tools and reduce admin time."
                 value={consolidationSavings}
                 currency={currency}
+                info={<div><code>Consolidation savings = retired tool cost + (admin hours × $/hr)</code></div>}
               >
                 <CurrencyInput label="Retired tool cost (annual)" value={consRetiredCost} onChange={setConsRetiredCost} currency={currency} />
                 <NumInput label="Admin hours saved" value={consAdminHours} onChange={setConsAdminHours} />
@@ -875,6 +951,7 @@ export default function PendoValueCalculator() {
                 description="Higher ratings improve conversion and installs."
                 value={appStoreRevenue}
                 currency={currency}
+                info={<div><code>Revenue = (CVR after - CVR before) × store traffic × ARPU/year</code></div>}
               >
                 <NumInput label="Store traffic (visits)" value={appTraffic} onChange={setAppTraffic} />
                 <RangeInput label={`CVR before (${(appCvrBefore * 100).toFixed(1)}%)`} value={appCvrBefore} onChange={setAppCvrBefore} max={1} />
@@ -889,6 +966,7 @@ export default function PendoValueCalculator() {
                 description="Automated saves on detractors reduce attrition; marginized ARR retained."
                 value={churnRetainedRevenue}
                 currency={currency}
+                info={<div><code>Revenue retained = (churn base - churn post) × accounts × ARPA/year × GM%</code></div>}
               >
                 <NumInput label="Accounts exposed" value={crAccts} onChange={setCrAccts} />
                 <RangeInput label={`Churn baseline (${pctFmt(crBase)})`} value={crBase} onChange={setCrBase} max={1} />
@@ -904,6 +982,12 @@ export default function PendoValueCalculator() {
                 description="Pre/post checks and guides reduce hotfixes and bug time."
                 value={releaseSavings}
                 currency={currency}
+                info={
+                  <div>
+                    <div><code>Hotfix savings = hotfixes avoided × cost/hotfix</code></div>
+                    <div><code>Bug fix savings = bug hours saved × $/hr</code></div>
+                  </div>
+                }
               >
                 <NumInput label="# hotfixes avoided" value={relHotfixesAvoided} onChange={setRelHotfixesAvoided} />
                 <CurrencyInput label="Cost per hotfix" value={relCostPerHotfix} onChange={setRelCostPerHotfix} currency={currency} />
@@ -918,6 +1002,11 @@ export default function PendoValueCalculator() {
                 description="Retire low-use features to reduce tech debt and infra."
                 value={sunsettingSavings}
                 currency={currency}
+                info={
+                  <div>
+                    <code>Sunsetting savings = (eng hours/sprint × sprints/yr × $/hr) + infra avoided</code>
+                  </div>
+                }
               >
                 <NumInput label="Eng. hours / sprint on feature" value={sunEngHoursPerSprint} onChange={setSunEngHoursPerSprint} />
                 <NumInput label="Sprints per year" value={sunSprintsPerYear} onChange={setSunSprintsPerYear} />
@@ -932,6 +1021,7 @@ export default function PendoValueCalculator() {
                 description="Prevent risky actions and reduce incident probability."
                 value={complianceSavings}
                 currency={currency}
+                info={<div><code>Expected savings = probability × impact × reduction%</code></div>}
               >
                 <RangeInput label={`Incident probability (${pctFmt(compProb)})`} value={compProb} onChange={setCompProb} max={1} />
                 <CurrencyInput label="Impact (annual)" value={compImpact} onChange={setCompImpact} currency={currency} />
@@ -945,6 +1035,7 @@ export default function PendoValueCalculator() {
                 description="Right-size named seats based on usage analytics."
                 value={licenseComplianceSavings}
                 currency={currency}
+                info={<div><code>Savings = max(0, inactive - buffer) × cost/seat</code></div>}
               >
                 <NumInput label="Inactive >90d" value={lcInactive} onChange={setLcInactive} />
                 <NumInput label="Safety buffer" value={lcBuffer} onChange={setLcBuffer} />
@@ -958,6 +1049,7 @@ export default function PendoValueCalculator() {
                 description="Shift email blasts to in-app announcements."
                 value={commsCpmSavings}
                 currency={currency}
+                info={<div><code>Savings = (emails avoided/1000 × CPM) + (hours avoided × $/hr)</code></div>}
               >
                 <NumInput label="Emails avoided" value={cpmEmailsAvoided} onChange={setCpmEmailsAvoided} />
                 <CurrencyInput label="CPM (per 1,000 emails)" value={cpmRate} onChange={setCpmRate} currency={currency} />
@@ -972,6 +1064,7 @@ export default function PendoValueCalculator() {
               description="Enter your annual investment to compute ROI & payback."
               value={-pendoAnnualCost}
               currency={currency}
+              info={<div><code>Entered directly; subtracts from total benefits to get net value</code></div>}
             >
               <CurrencyInput label="Pendo annual cost" value={pendoAnnualCost} onChange={setPendoAnnualCost} currency={currency} />
             </ModuleCard>
@@ -1028,6 +1121,7 @@ export default function PendoValueCalculator() {
                 value={Math.round(effectiveCostPerMinute * 60)}
                 onChange={() => {}}
                 currency={currency}
+                disabled
               />
             </div>
 
@@ -1076,6 +1170,15 @@ export default function PendoValueCalculator() {
           </div>
         )}
 
+        {/* Settings Modal (NEW) */}
+        {showSettings && (
+          <SettingsModal
+            initialUrl={logoUrl}
+            onSave={(url) => { setLogoUrl(url.trim()); setShowSettings(false); }}
+            onClose={() => setShowSettings(false)}
+          />
+        )}
+
         <footer style={{ fontSize: 12, color: "#64748b", paddingTop: 16 }}>
           Built by Tom Day. Feedback Welcome! Save state persists locally in your browser.
         </footer>
@@ -1084,16 +1187,54 @@ export default function PendoValueCalculator() {
   );
 }
 
-function ModuleCard({ title, description, value, children, currency }) {
+function ModuleCard({ title, description, value, children, currency, info }) {
+  const [open, setOpen] = React.useState(false);
   return (
-    <div style={box}>
+    <div style={{ ...box, position: "relative" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left" }}>
-        <div style={{ fontSize: 14, fontWeight: 600 }}>{title}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ fontSize: 14, fontWeight: 600 }}>{title}</div>
+          {info ? (
+            <button
+              onClick={() => setOpen((v) => !v)}
+              aria-label={`Info for ${title}`}
+              title="Show calculation details"
+              style={{
+                border: "1px solid #e5e7eb",
+                borderRadius: 999,
+                width: 20, height: 20, lineHeight: "18px",
+                fontSize: 12, background: "#fff", cursor: "pointer",
+                color: "#0f172a", textAlign: "center", padding: 0
+              }}
+            >
+              i
+            </button>
+          ) : null}
+        </div>
         <div style={{ fontSize: 14, fontWeight: 600, color: value >= 0 ? "#047857" : "#be123c" }}>
-          {value >= 0 ? "+" : ""}
-          {currencyFmt(value, currency)}
+          {value >= 0 ? "+" : ""}{currencyFmt(value, currency)}
         </div>
       </div>
+
+      {open && info && (
+        <div
+          role="dialog"
+          aria-label={`${title} calculation`}
+          style={{
+            position: "absolute", top: 36, right: 8, zIndex: 30, width: 340,
+            background: "#111827", color: "#fff", borderRadius: 12, padding: 12,
+            boxShadow: "0 6px 16px rgba(0,0,0,0.25)"
+          }}
+          onClick={() => setOpen(false)}
+        >
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>How this is calculated</div>
+          <div style={{ fontSize: 12, lineHeight: 1.5, color: "#e5e7eb" }}>{info}</div>
+          <div style={{ fontSize: 11, marginTop: 8, color: "#cbd5e1" }}>
+            (Click to dismiss)
+          </div>
+        </div>
+      )}
+
       <p style={{ color: "#64748b", fontSize: 10, marginTop: 6, textAlign: "left" }}>{description}</p>
       <div style={{ display: "grid", gap: 12, marginTop: 12 }}>{children}</div>
     </div>
@@ -1116,6 +1257,45 @@ function Stat({ label, value }) {
     <div style={{ border: "1px solid #e5e7eb", borderRadius: 16, padding: 16 }}>
       <div style={{ color: "#64748b", marginBottom: 6 }}>{label}</div>
       <div style={{ fontSize: 16, fontWeight: 600 }}>{value}</div>
+    </div>
+  );
+}
+
+// ---- Settings Modal (NEW) ----
+function SettingsModal({ initialUrl, onSave, onClose }) {
+  const [url, setUrl] = React.useState(initialUrl || "");
+  return (
+    <div style={{
+      position: "fixed", inset: 0, background: "rgba(0,0,0,0.35)",
+      display: "grid", placeItems: "center", zIndex: 50
+    }}>
+      <div style={{ ...box, width: 520, padding: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ fontSize: 18, fontWeight: 600 }}>Settings</div>
+          <button onClick={onClose} style={{ ...inputCss, width: "auto", cursor: "pointer" }}>Close</button>
+        </div>
+        <div style={{ marginTop: 12 }}>
+          <div style={labelCss}>Custom logo URL (appears left of Pendo logo)</div>
+          <input
+            type="url"
+            placeholder="https://example.com/logo.png"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            style={inputCss}
+          />
+          <div style={{ fontSize: 12, color: "#64748b", marginTop: 6 }}>
+            Leave blank to hide the custom logo.
+          </div>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
+          <button onClick={() => onSave("")} style={{ ...inputCss, width: "auto", cursor: "pointer" }}>
+            Remove Logo
+          </button>
+          <button onClick={() => onSave(url)} style={{ ...inputCss, width: "auto", cursor: "pointer" }}>
+            Save
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -1204,8 +1384,6 @@ function RangeInput({ label, value, onChange, step = 0.01, min = 0, max = 1 }) {
     // Replay default
     console.assert(close(5000 * 0.1 * 120, 60000), "Replay calc");
   } catch (e) {
-    // Never crash UI due to tests
-    // eslint-disable-next-line no-console
     console.warn("Pendo calculator self-test warning:", e);
   }
 })();
