@@ -43,9 +43,9 @@ const num = (v, fallback = 0) => {
 export const LEVERS_META = [
   {
     id: "analytics",
-    title: "License Optimization (Analytics)",
+    title: "License Optimization",
     description:
-      "Rightsize analytics licenses and cross-charge accurately using Pendo usage + metadata.",
+      "Rightsize analytics licenses and cross-charge accurately using Pendo usage + metadata. (Analytics, Session Replay, Listen, Sentiment)",
     pbo: "Cut Costs",
     modules: ["Analytics", "Session Replay", "Listen", "Sentiment"],
     useCases: [
@@ -59,8 +59,9 @@ export const LEVERS_META = [
   },
   {
     id: "guides",
-    title: "Email Deflection (Guides)",
-    description: "Replace costly broadcast emails with in-app guidance.",
+    title: "Email Deflection",
+    description:
+      "Replace costly broadcast emails with in-app guidance. (Analytics, Guides, Listen, Sentiment, Orchestrate)",
     pbo: "Cut Costs",
     modules: ["Guides", "Orchestrate", "Analytics", "Listen", "Sentiment"],
     useCases: [
@@ -73,8 +74,9 @@ export const LEVERS_META = [
   },
   {
     id: "listen",
-    title: "Capture at Scale (Listen)",
-    description: "Collect structured feedback with minutes instead of meetings.",
+    title: "Capture at Scale",
+    description:
+      "Collect structured feedback with minutes instead of meetings. (Analytics, Listen, Sentiment)",
     pbo: "Cut Costs",
     modules: ["Listen", "Sentiment", "Analytics"],
     useCases: [
@@ -87,8 +89,9 @@ export const LEVERS_META = [
   },
   {
     id: "surveys",
-    title: "Automate Collection (NPS & Surveys)",
-    description: "Automate sentiment capture and reduce manual survey ops.",
+    title: "Automate Collection",
+    description:
+      "Automate sentiment capture and reduce manual survey ops. (Analytics, Listen, NPS & Surveys, Sentiment)",
     pbo: "Mitigate Risk",
     modules: ["NPS & Surveys", "Listen", "Sentiment", "Analytics"],
     useCases: [
@@ -99,8 +102,9 @@ export const LEVERS_META = [
   },
   {
     id: "replay",
-    title: "Faster Triage (Session Replay)",
-    description: "Use replays to cut investigation time for bugs and issues.",
+    title: "Faster Triage",
+    description:
+      "Use replays to cut investigation time for bugs and issues. (Analytics, Listen, Sentiment, Session Replay)",
     pbo: "Cut Costs",
     modules: ["Session Replay", "Analytics", "Listen", "Sentiment"],
     useCases: [
@@ -113,8 +117,9 @@ export const LEVERS_META = [
   },
   {
     id: "onboarding",
-    title: "Onboarding Acceleration (Guides, Analytics)",
-    description: "Cut training/onboarding time via in-app onboarding & help center.",
+    title: "Onboarding Acceleration",
+    description:
+      "Cut training/onboarding time via in-app onboarding & help center. (Analytics, Guides, Orchestrate, Session Replay)",
     pbo: "Mitigate Risk",
     modules: ["Guides", "Analytics", "Orchestrate", "Session Replay"],
     useCases: [
@@ -126,8 +131,9 @@ export const LEVERS_META = [
   },
   {
     id: "productEff",
-    title: "Product Team Efficiency (Analytics)",
-    description: "Fewer BI/eng asks; faster decisions with self-serve analytics.",
+    title: "Product Team Efficiency",
+    description:
+      "Fewer BI/eng asks; faster decisions with self-serve analytics. (Analytics, Listen, Sentiment, Session Replay)",
     pbo: "Cut Costs",
     modules: ["Analytics", "Session Replay", "Listen", "Sentiment"],
     useCases: [
@@ -138,8 +144,9 @@ export const LEVERS_META = [
   },
   {
     id: "tickets",
-    title: "Ticket Deflection (Guides, Session Replay)",
-    description: "In-app help + replay reduces tickets and speeds handling.",
+    title: "Ticket Deflection",
+    description:
+      "In-app help + replay reduces tickets and speeds handling. (Analytics, Guides, Listen, Sentiment, Session Replay, Orchestrate)",
     pbo: "Cut Costs",
     modules: ["Guides", "Session Replay", "Analytics", "Listen", "Sentiment", "Orchestrate"],
     useCases: [
@@ -151,8 +158,9 @@ export const LEVERS_META = [
   },
   {
     id: "trialUplift",
-    title: "Trial→Paid / Upsell Uplift - PLG (Guides, Analytics)",
-    description: "Nudges lift conversion at moments of value; marginized ARR.",
+    title: "Trial→Paid / Upsell Uplift",
+    description:
+      "Nudges lift conversion at moments of value; marginized ARR. (Analytics, Guides, Listen, Sentiment, Orchestrate, Session Replay)",
     pbo: "Increase Revenue",
     modules: ["Guides", "Analytics", "Orchestrate", "Session Replay", "Listen", "Sentiment"],
     useCases: [
@@ -164,8 +172,9 @@ export const LEVERS_META = [
   },
   {
     id: "expansion",
-    title: "Expansion via Feature Adoption (Guides, Analytics)",
-    description: "Targeted education increases attach of premium features.",
+    title: "Expansion via Feature Adoption",
+    description:
+      "Targeted education increases attach of premium features. (Analytics, Guides, Listen, Sentiment, Orchestrate, Session Replay)",
     pbo: "Increase Revenue",
     modules: ["Guides", "Analytics", "Orchestrate", "Listen", "Session Replay", "Sentiment"],
     useCases: [
@@ -178,8 +187,9 @@ export const LEVERS_META = [
   },
   {
     id: "mttr",
-    title: "MTTR & Time-to-Reproduce Reduction (Session Replay, Analytics)",
-    description: "Replay shortens investigation and protects revenue during incidents.",
+    title: "MTTR & Time-to-Reproduce Reduction",
+    description:
+      "Replay shortens investigation and protects revenue during incidents. (Analytics, Listen, Sentiment, Session Replay)",
     pbo: "Mitigate Risk",
     modules: ["Session Replay", "Analytics", "Listen", "Sentiment"],
     useCases: [
@@ -191,8 +201,9 @@ export const LEVERS_META = [
   },
   {
     id: "research",
-    title: "Research/Recruitment Cost Avoidance (Guides, Surveys, Listen)",
-    description: "Slash panel fees and lead times using in-app recruitment.",
+    title: "Research/Recruitment Cost Avoidance",
+    description:
+      "Slash panel fees and lead times using in-app recruitment. (Analytics, Guides, Listen, Sentiment, NPS & Surveys)",
     pbo: "Cut Costs",
     modules: ["Guides", "NPS & Surveys", "Listen", "Sentiment", "Analytics"],
     useCases: [
@@ -203,16 +214,18 @@ export const LEVERS_META = [
   },
   {
     id: "training",
-    title: "Training Content Shift - Formal → Just-in-Time (Guides)",
-    description: "Reduce formal training hours and travel/venue spend.",
+    title: "Training Content Shift - Formal → Just-in-Time",
+    description:
+      "Reduce formal training hours and travel/venue spend. (Analytics, Guides, Session Replay)",
     pbo: "Cut Costs",
     modules: ["Guides", "Analytics", "Session Replay"],
     useCases: ["Reduce Training Costs", "Improve Employee Onboarding"],
   },
   {
     id: "consolidation",
-    title: "Tool Consolidation (Analytics, Guides, NPS & Surveys, Listen, Session Replay)",
-    description: "Retire overlapping tools and reduce admin time.",
+    title: "Tool Consolidation",
+    description:
+      "Retire overlapping tools and reduce admin time. (Analytics, Guides, Listen, NPS & Surveys, Session Replay)",
     pbo: "Cut Costs",
     modules: ["Analytics", "Guides", "NPS & Surveys", "Listen", "Session Replay"],
     useCases: [
@@ -223,16 +236,18 @@ export const LEVERS_META = [
   },
   {
     id: "appStore",
-    title: "App Store Rating & Review Lift (Pendo Mobile, Guides)",
-    description: "Higher ratings improve conversion and installs.",
+    title: "App Store Rating & Review Lift",
+    description:
+      "Higher ratings improve conversion and installs. (Analytics, Guides, Mobile)",
     pbo: "Increase Revenue",
     modules: ["Mobile", "Guides", "Analytics"],
     useCases: ["Increase Product Adoption"],
   },
   {
     id: "churn",
-    title: "Churn Reduction from Detractor Workflows (NPS, Analytics)",
-    description: "Automated saves on detractors reduce attrition; marginized ARR retained.",
+    title: "Churn Reduction from Detractor Workflows",
+    description:
+      "Automated saves on detractors reduce attrition; marginized ARR retained. (Analytics, Guides, Listen, NPS & Surveys, Orchestrate)",
     pbo: "Mitigate Risk",
     modules: ["NPS & Surveys", "Analytics", "Listen", "Sentiment", "Orchestrate"],
     useCases: [
@@ -244,9 +259,9 @@ export const LEVERS_META = [
   },
   {
     id: "release",
-    title:
-      "Release Validation & Hotfix Avoidance (Analytics, Session Replay, Guides)",
-    description: "Pre/post checks and guides reduce hotfixes and bug time.",
+    title: "Release Validation & Hotfix Avoidance",
+    description:
+      "Pre/post checks and guides reduce hotfixes and bug time. (Analytics, Guides, Listen, Sentiment, Session Replay)",
     pbo: "Cut Costs",
     modules: ["Analytics", "Session Replay", "Guides", "Listen", "Sentiment"],
     useCases: [
@@ -258,8 +273,9 @@ export const LEVERS_META = [
   },
   {
     id: "sunsetting",
-    title: "Feature Sunsetting & Maintenance Cost Reduction (Analytics, Listen)",
-    description: "Retire low-use features to reduce tech debt and infra.",
+    title: "Feature Sunsetting & Maintenance Cost Reduction",
+    description:
+      "Retire low-use features to reduce tech debt and infra. (Analytics, Listen, Sentiment)",
     pbo: "Cut Costs",
     modules: ["Analytics", "Listen", "Sentiment"],
     useCases: [
@@ -270,8 +286,9 @@ export const LEVERS_META = [
   },
   {
     id: "compliance",
-    title: "Compliance & Risk Mitigation (Guides, Analytics)",
-    description: "Prevent risky actions and reduce incident probability.",
+    title: "Compliance & Risk Mitigation",
+    description:
+      "Prevent risky actions and reduce incident probability. (Analytics, Guides, Listen, Session Replay)",
     pbo: "Mitigate Risk",
     modules: ["Guides", "Analytics", "Session Replay", "Listen"],
     useCases: [
@@ -283,53 +300,61 @@ export const LEVERS_META = [
   },
   {
     id: "licenseCompliance",
-    title: "Internal SaaS License Compliance (Analytics)",
-    description: "Right-size named seats based on usage analytics.",
+    title: "Internal SaaS License Compliance",
+    description:
+      "Right-size named seats based on usage analytics. (Analytics)",
     pbo: "Cut Costs",
     modules: ["Analytics"],
     useCases: ["Optimize Software Spend", "Understand Internal Product Usage"],
   },
   {
     id: "commsCPM",
-    title: "Per-Email Comms Cost Avoidance (In-App Announcements)",
-    description: "Shift email blasts to in-app announcements.",
+    title: "Per-Email Comms Cost Avoidance",
+    description:
+      "Shift email blasts to in-app announcements. (Analytics, Guides, Orchestrate)",
     pbo: "Cut Costs",
     modules: ["Guides", "Orchestrate", "Analytics"],
     useCases: ["Lower CAC", "Reduce Customer Support Costs – Mktg"],
   },
   {
-  id: "aiAdoption",
-  title: "AI Feature Adoption Uplift",
-  description: "Faster ROI and revenue by accelerating adoption of AI-powered features.",
-  pbo: "Increase Revenue",
-  modules: ["Analytics", "Session Replay", "Guides", "Orchestrate", "Listen", "Sentiment"],
-  useCases: ["Accelerate AI Adoption", "Improve Trial Conversion Rate", "Increase Product Adoption"],
-},
-{
-  id: "aiProductivity",
-  title: "AI Productivity Boost (Employees/CS/PMs)",
-  description: "Streamline workflows with AI copilots and in-context guidance, reducing OpEx.",
-  pbo: "Cut Costs",
-  modules: ["Analytics", "Guides", "Orchestrate", "Listen", "Sentiment"],
-  useCases: ["Improve Employee Productivity w/ AI", "Optimize Revenue Teams – IT", "Improve Team Productivity"],
-},
-{
-  id: "aiSupportDeflection",
-  title: "AI Support Deflection",
-  description: "Use AI-driven in-app answers and nudges to reduce ticket volume.",
-  pbo: "Cut Costs",
-  modules: ["Guides", "Analytics", "Session Replay", "Listen", "Sentiment"],
-  useCases: ["Reduce Support Costs – IT", "Reduce Customer Success Costs"],
-},
-{
-  id: "aiRiskMitigation",
-  title: "AI Risk Mitigation & Forecast Accuracy",
-  description: "Improve forecasts and reduce risk with AI-powered insights on usage and revenue correlation.",
-  pbo: "Mitigate Risk",
-  modules: ["Analytics", "Listen", "NPS & Surveys", "Sentiment"],
-  useCases: ["Improve Forecasting Accuracy", "Optimize Revenue & Hiring Focus"],
-},
+    id: "aiAdoption",
+    title: "AI Feature Adoption Uplift",
+    description:
+      "Faster ROI and revenue by accelerating adoption of AI-powered features. (Analytics, Guides, Listen, Sentiment, Orchestrate, Session Replay)",
+    pbo: "Increase Revenue",
+    modules: ["Analytics", "Session Replay", "Guides", "Orchestrate", "Listen", "Sentiment"],
+    useCases: ["Accelerate AI Adoption", "Improve Trial Conversion Rate", "Increase Product Adoption"],
+  },
+  {
+    id: "aiProductivity",
+    title: "AI Productivity Boost",
+    description:
+      "Streamline workflows with AI copilots and in-context guidance, reducing OpEx. (Analytics, Guides, Listen, Sentiment, Orchestrate)",
+    pbo: "Cut Costs",
+    modules: ["Analytics", "Guides", "Orchestrate", "Listen", "Sentiment"],
+    useCases: ["Improve Employee Productivity w/ AI", "Optimize Revenue Teams – IT", "Improve Team Productivity"],
+  },
+  {
+    id: "aiSupportDeflection",
+    title: "AI Support Deflection",
+    description:
+      "Use AI-driven in-app answers and nudges to reduce ticket volume. (Analytics, Guides, Listen, Sentiment, Session Replay)",
+    pbo: "Cut Costs",
+    modules: ["Guides", "Analytics", "Session Replay", "Listen", "Sentiment"],
+    useCases: ["Reduce Support Costs – IT", "Reduce Customer Success Costs"],
+  },
+  {
+    id: "aiRiskMitigation",
+    title: "AI Risk Mitigation & Forecast Accuracy",
+    description:
+      "Improve forecasts and reduce risk with AI-powered insights on usage and revenue correlation. (Analytics, Listen, NPS & Surveys, Sentiment)",
+    pbo: "Mitigate Risk",
+    modules: ["Analytics", "Listen", "NPS & Surveys", "Sentiment"],
+    useCases: ["Improve Forecasting Accuracy", "Optimize Revenue & Hiring Focus"],
+  },
 ];
+
+
 
 // ========== Component ==========
 export default function LeversSection({
