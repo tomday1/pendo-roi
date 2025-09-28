@@ -31,25 +31,44 @@ const inputCss = {
   background: "#fff",
 };
 const selectCss = { ...inputCss, width: 120 };
+
+const PENDO_PINK = "#ff3366";
+
 const tabBtn = (active) => ({
   ...inputCss,
   width: "auto",
   padding: "8px 12px",
-  background: active ? "#111827" : "#fff",
+  background: active ? PENDO_PINK : "#fff",
   color: active ? "#fff" : "#111827",
   cursor: "pointer",
+  border: `1px solid ${active ? PENDO_PINK : "#e5e7eb"}`,
 });
+// single pill look used everywhere in header
+const PILL_HEIGHT = 40;
+const pillLook = {
+  borderRadius: 999,
+  padding: "8px 14px",
+  height: PILL_HEIGHT,
+};
+
 const pillBtn = (active, bg) => ({
   ...inputCss,
+  ...pillLook,
   width: "auto",
-  padding: "6px 10px",
-  borderRadius: 999,
   cursor: "pointer",
   background: active && bg ? bg : "#fff",
   borderColor: active ? "#94a3b8" : "#e5e7eb",
   color: "#0f172a",
 });
 
+function FilterPill({ label, active, badge, onClick }) {
+  return (
+    <button onClick={onClick} style={pillBtn(active)} title={label}>
+      {label}
+      {badge ? <span style={{ marginLeft: 8, fontSize: 12, opacity: 0.75 }}>{badge}</span> : null}
+    </button>
+  );
+}
 // --- Helpers ---
 const currencyFmt = (n, currency) =>
   new Intl.NumberFormat(undefined, {
@@ -105,9 +124,19 @@ const PENDO_MODULES = [
   "Orchestrate",
   "Mobile",
 ];
+// Pretty labels for modules (used only for display)
+const MODULE_LABELS = {
+  Analytics: "📊 Analytics",
+  Guides: "🧭 Guides",
+  Listen: "👂 Listen",
+  "NPS & Surveys": "📝 NPS & Surveys",
+  "Session Replay": "🎥 Session Replay",
+  Orchestrate: "🎼 Orchestrate",
+  Mobile: "📱 Mobile",
+};
+
 
 const USE_CASES = [
-  "All Use Cases",
   // Revenue
   "Increase Product Adoption",
   "Optimize Product Revenue",
@@ -152,6 +181,38 @@ const USE_CASES = [
   "Optimize Messaging",
   "Increase App Retention",
 ];
+
+// Problem taxonomy (editable)
+const PROBLEMS = [
+  "Low adoption",
+  "Poor trial conversion",
+  "Churn risk",
+  "High support volume",
+  "Slow incident resolution (MTTR)",
+  "Inefficient onboarding/training",
+  "Inefficient roadmap/R&D decisions",
+  "Tool sprawl / high software spend",
+  "Compliance / legal / security risk",
+  "Revenue team productivity",
+  "AI adoption lag",
+  "Low NPS/CSAT",
+];
+
+// Problem ➜ Use Cases mapping (inclusive union)
+const PROBLEM_TO_USE_CASES = {
+  "Low adoption": ["Increase Product Adoption", "Improve Feature Adoption – Mktg", "Increase App Retention"],
+  "Poor trial conversion": ["Improve Trial Conversion Rate", "Drive Product-Led Growth – Mktg"],
+  "Churn risk": ["Minimize Churn", "Reduce Churn – Revenue", "Increase App Retention", "Improve Customer Satisfaction"],
+  "High support volume": ["Reduce Customer Support Costs", "Reduce Support Costs – IT", "Reduce Customer Support Costs – Mktg", "Improve Product Experience"],
+  "Slow incident resolution (MTTR)": ["Optimize Major Systems Rollouts", "Improve Product Experience", "Minimize Security Risk"],
+  "Inefficient onboarding/training": ["Improve Employee Onboarding", "Reduce Training Costs", "Improve Application Migrations"],
+  "Inefficient roadmap/R&D decisions": ["Connect Eng Work to Business Outcomes", "Improve Roadmap Decisions – Cost", "Improve Roadmap Decisions – Risk", "Identify Software Gaps"],
+  "Tool sprawl / high software spend": ["Optimize Software Spend", "Reduce Engineering Costs – Mktg", "Identify Software Gaps"],
+  "Compliance / legal / security risk": ["Ensure Compliance", "Avoid Legal Issues", "Minimize Security Risk", "Improve Forecasting Accuracy"],
+  "Revenue team productivity": ["Optimize Revenue Teams – IT", "Improve Team Productivity", "Optimize Revenue & Hiring Focus"],
+  "AI adoption lag": ["Accelerate AI Adoption", "Increase Product Adoption", "Improve Trial Conversion Rate"],
+  "Low NPS/CSAT": ["Understand Customer Sentiment", "Improve Customer Satisfaction", "Optimize Messaging"],
+};
 
 export default function PendoValueCalculator() {
   const [currency, setCurrency] = useLocal("pendo.currency", "GBP");
@@ -466,9 +527,76 @@ export default function PendoValueCalculator() {
   const [showSettings, setShowSettings] = useState(false);
 
   // --- Filters (NEW) ---
-  const [pboFilter, setPboFilter] = useLocal("pendo.filter.pbo", "All");
+  // single-select PBO pill
+  const [pboFilter, setPboFilter] = useLocal("pendo.filter.pbo", "");
+
+  // module dropdown (keeps "All Pendo Modules")
   const [moduleFilter, setModuleFilter] = useLocal("pendo.filter.module", "All Pendo Modules");
-  const [useCaseFilter, setUseCaseFilter] = useLocal("pendo.filter.usecase", "All Use Cases");
+
+  // multi-selects
+  const [useCaseFilters, setUseCaseFilters] = useLocal("pendo.filter.usecases", []);   // string[]
+  const [problemFilters, setProblemFilters] = useLocal("pendo.filter.problems", []);   // string[]
+
+  const [showProblem, setShowProblem] = useState(false);
+  const [showUseCases, setShowUseCases] = useState(false);
+
+  // Build UseCase -> {levers, modules, pbo} from LEVERS_META
+const UC_TO_LEVERS = React.useMemo(() => {
+  const map = {};
+  LEVERS_META.forEach(l => {
+    (l.useCases || []).forEach(uc => {
+      if (!map[uc]) map[uc] = { levers: new Set(), modules: new Set(), pbo: new Set() };
+      map[uc].levers.add(l.id);
+      (l.modules || []).forEach(m => map[uc].modules.add(m));
+      map[uc].pbo.add(l.pbo);
+    });
+  });
+  return map;
+}, []);
+
+const allowedUseCases = React.useMemo(() => {
+  if (!problemFilters.length) return new Set(USE_CASES);
+  const s = new Set();
+  problemFilters.forEach(p => {
+    (PROBLEM_TO_USE_CASES[p] || []).forEach(uc => s.add(uc));
+  });
+  return s;
+}, [problemFilters]);
+
+const activeUseCases = React.useMemo(() => {
+  const base = allowedUseCases;
+  if (!useCaseFilters.length) return base;
+  const s = new Set();
+  useCaseFilters.forEach(uc => { if (base.has(uc)) s.add(uc); });
+  return s.size ? s : base;
+}, [allowedUseCases, useCaseFilters]);
+
+const allowedLevers = React.useMemo(() => {
+  const s = new Set();
+  activeUseCases.forEach(uc => {
+    const m = UC_TO_LEVERS[uc];
+    if (m) m.levers.forEach(id => s.add(id));
+  });
+  return (problemFilters.length || useCaseFilters.length) ? s : new Set(LEVERS_META.map(x => x.id));
+}, [activeUseCases, problemFilters.length, useCaseFilters.length, UC_TO_LEVERS]);
+
+const allowedModules = React.useMemo(() => {
+  const s = new Set();
+  activeUseCases.forEach(uc => {
+    const m = UC_TO_LEVERS[uc];
+    if (m) m.modules.forEach(id => s.add(id));
+  });
+  return s.size ? s : new Set(PENDO_MODULES.slice(1));
+}, [activeUseCases, UC_TO_LEVERS]);
+
+const allowedPbos = React.useMemo(() => {
+  const s = new Set();
+  activeUseCases.forEach(uc => {
+    const m = UC_TO_LEVERS[uc];
+    if (m) m.pbo.forEach(id => s.add(id));
+  });
+  return s.size ? s : new Set(["Increase Revenue", "Cut Costs", "Mitigate Risk"]);
+}, [activeUseCases, UC_TO_LEVERS]);
 
   // Build export snapshot for current tab
   const buildSnapshot = () => {
@@ -579,43 +707,130 @@ export default function PendoValueCalculator() {
         justifyContent: "flex-end",
       }}
     >
+
+ {/* Problem pill  popover */}
+ <div style={{ position: "relative" }}>
+   <FilterPill
+     label="Problem"
+     active={showProblem || problemFilters.length > 0}
+     badge={problemFilters.length ? `${problemFilters.length}` : undefined}
+     onClick={() => {
+       setShowProblem(v => !v);
+       setShowUseCases(false);
+     }}
+   />
+   {showProblem && (
+     <div
+       style={{
+         position: "absolute",
+         top: "calc(100%  8px)",
+         left: 0,
+         zIndex: 60,
+         background: "#fff",
+         border: "1px solid #e5e7eb",
+         borderRadius: 16,
+         boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
+       }}
+       onKeyDown={(e) => e.key === "Escape" && setShowProblem(false)}
+     >
+       <MultiSelectSearch
+         label="Problem"
+         options={PROBLEMS}
+         selected={problemFilters}
+         onChange={(vals) => {
+           setProblemFilters(vals);
+         }}
+         placeholder="Search problems…"
+       />
+     </div>
+   )}
+ </div>
+
+ {/* Use Cases pill  popover (options constrained by Problem) */}
+ <div style={{ position: "relative" }}>
+   <FilterPill
+     label="Use Cases"
+     active={showUseCases || useCaseFilters.length > 0}
+     badge={useCaseFilters.length ? `${useCaseFilters.length}` : undefined}
+     onClick={() => {
+       setShowUseCases(v => !v);
+       setShowProblem(false);
+     }}
+   />
+   {showUseCases && (
+     <div
+       style={{
+         position: "absolute",
+         top: "calc(100%  8px)",
+         left: 0,
+         zIndex: 60,
+         background: "#fff",
+         border: "1px solid #e5e7eb",
+         borderRadius: 16,
+         boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
+       }}
+       onKeyDown={(e) => e.key === "Escape" && setShowUseCases(false)}
+     >
+       <MultiSelectSearch
+         label="Use Cases"
+         options={USE_CASES.filter(uc => allowedUseCases.has(uc))}
+         selected={useCaseFilters}
+         onChange={(vals) => {
+           setUseCaseFilters(vals);
+         }}
+         placeholder="Search use cases…"
+       />
+     </div>
+   )}
+ </div>
+
+
+      {/* PBO pills — constrained by Problem/Use Case (disable if not allowed) */}
+      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+        {PBO_PILLS.map((p) => {
+          const enabledPbo =
+            p === "All" ? true : allowedPbos.has(p);
+          return (
+            <button
+              key={p}
+              onClick={() => {
+                if (!enabledPbo) return;
+                setPboFilter(p);
+                setEnabledByPbo(p);
+              }}
+              title={p === "All" ? "Show all PBOs" : `Filter by ${p}`}
+              style={{
+                ...pillBtn(
+                  pboFilter && pboFilter === p,
+                  p === "All"
+                    ? COST_PINK
+                    : p === "Increase Revenue"
+                    ? PBO_COLORS["Increase Revenue"]
+                    : p === "Cut Costs"
+                    ? PBO_COLORS["Cut Costs"]
+                    : p === "Mitigate Risk"
+                    ? PBO_COLORS["Mitigate Risk"]
+                    : "#fff"
+                ),
+                opacity: enabledPbo ? 1 : 0.45,
+                cursor: enabledPbo ? "pointer" : "not-allowed",
+              }}
+            >
+              {p}
+            </button>
+          );
+        })}
+      </div>
+
       {/* Choose levers toggle */}
       <button
         onClick={() => setShowSelector(!showSelector)}
-        style={{ ...inputCss, width: "auto", cursor: "pointer" }}
+        style={{ ...inputCss, ...pillLook, width: "auto", cursor: "pointer" }}
       >
         {showSelector ? "Hide Levers" : "Choose Levers"}
       </button>
 
-      {/* PBO pills */}
-      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-        {PBO_PILLS.map((p) => (
-          <button
-            key={p}
-            onClick={() => {
-             setPboFilter(p);
-             setEnabledByPbo(p); // also enable the matching levers
-            }}
-            title={p === "All" ? "Show all PBOs" : `Filter by ${p}`}
-            style={pillBtn(
-              pboFilter === p,
-              p === "All"
-                ? COST_PINK
-                : p === "Increase Revenue"
-                ? PBO_COLORS["Increase Revenue"]
-                : p === "Cut Costs"
-                ? PBO_COLORS["Cut Costs"]
-                : p === "Mitigate Risk"
-                ? PBO_COLORS["Mitigate Risk"]
-                : "#fff"
-            )}
-          >
-            {p}
-          </button>
-        ))}
-      </div>
-
-      {/* Module filter */}
+      {/* Pendo Modules — constrained by Problem/Use Case */}
       <select
         value={moduleFilter}
         onChange={(e) => setModuleFilter(e.target.value)}
@@ -623,32 +838,24 @@ export default function PendoValueCalculator() {
         style={{ ...selectCss, width: 180 }}
         title="Filter by Pendo module"
       >
-        {PENDO_MODULES.map((m) => (
-          <option key={m} value={m}>
-            {m}
-          </option>
-        ))}
-      </select>
-      
+        {/* Always include the "All" option */}
+        <option value="All Pendo Modules">All Pendo Modules</option>
 
-      {/* Use Case filter */}
-      <select
-        value={useCaseFilter}
-        onChange={(e) => setUseCaseFilter(e.target.value)}
-        aria-label="Filter by Use Case"
-        style={{ ...selectCss, width: 260 }}
-        title="Filter by Use Case"
-      >
-        {USE_CASES.map((u) => (
-          <option key={u} value={u}>
-            {u}
-          </option>
-        ))}
+        {/* Only include allowed canonical values, but show emoji labels */}
+        {PENDO_MODULES.slice(1)
+          .filter((m) => allowedModules.has(m))
+          .map((m) => (
+            <option key={m} value={m}>
+              {MODULE_LABELS[m] || m}
+            </option>
+          ))}
       </select>
+
+
 
       {/* Currency */}
       <select
-        style={{ ...selectCss, width: 120 }}
+        style={{ ...selectCss, ...pillLook, width: 120 }}
         value={currency}
         onChange={(e) => setCurrency(e.target.value)}
         aria-label="Currency"
@@ -671,9 +878,10 @@ export default function PendoValueCalculator() {
         onClick={() => setShowSettings(true)}
         aria-label="Settings"
         title="Settings"
-        style={{
+         style={{
           ...inputCss,
-          width: 44,
+          ...pillLook,
+          width: "auto",
           cursor: "pointer",
           display: "grid",
           placeItems: "center",
@@ -776,10 +984,10 @@ export default function PendoValueCalculator() {
         {/* Tabs */}
         <div style={{ ...hstack, marginTop: 16, flexWrap: "wrap" }}>
           {[
-            { id: "levers", label: "Value Levers" },
-            { id: "assumptions", label: "Assumptions" },
-            { id: "summary", label: "Breakdown" },
-            { id: "stories", label: "Customer Stories" },
+            { id: "levers", label: "💰 Value Levers" },
+            { id: "assumptions", label: "🤔 Assumptions" },
+            { id: "summary", label: "📑 Breakdown" },
+            { id: "stories", label: "🚧 Customer Stories 🚧" },
           ].map((t) => (
             <button key={t.id} onClick={() => setTab(t.id)} style={tabBtn(tab === t.id)}>
               {t.label}
@@ -1050,8 +1258,11 @@ export default function PendoValueCalculator() {
             // NEW filters + colors
             pboFilter={pboFilter}
             moduleFilter={moduleFilter}
-            useCaseFilter={useCaseFilter}
+            useCaseFilters={useCaseFilters}
+            problemFilters={problemFilters}
+            allowedLevers={allowedLevers}
             pboColors={PBO_COLORS}
+
           />
         )}
 
@@ -1115,6 +1326,53 @@ export default function PendoValueCalculator() {
         <footer style={{ fontSize: 12, color: "#64748b", paddingTop: 16 }}>
           Built by Tom Day. Feedback Welcome! Save state persists locally in your browser.
         </footer>
+      </div>
+    </div>
+  );
+}
+
+function MultiSelectSearch({ label, options, selected, onChange, placeholder = "Search..." }) {
+  const [q, setQ] = React.useState("");
+  const filtered = React.useMemo(() => {
+    const qq = q.trim().toLowerCase();
+    return !qq ? options : options.filter(o => o.toLowerCase().includes(qq));
+  }, [options, q]);
+
+  const toggle = (val) => {
+    const set = new Set(selected);
+    if (set.has(val)) set.delete(val);
+    else set.add(val);
+    onChange(Array.from(set));
+  };
+
+  const clearAll = () => onChange([]);
+
+  return (
+    <div style={{ ...inputCss, width: "auto", padding: 8 }}>
+      <div style={{ fontSize: 12, color: "#475569", marginBottom: 6 }}>{label}</div>
+      <input
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder={placeholder}
+        style={{ ...inputCss, width: 260 }}
+      />
+      <div style={{ maxHeight: 220, overflow: "auto", marginTop: 6, border: "1px solid #e5e7eb", borderRadius: 12, padding: 8, background: "#fff", width: 260 }}>
+        {filtered.map((opt) => {
+          const isChecked = selected.includes(opt);
+          return (
+            <label key={opt} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, padding: "4px 0" }}>
+              <input type="checkbox" checked={isChecked} onChange={() => toggle(opt)} />
+              <span>{opt}</span>
+            </label>
+          );
+        })}
+        {!filtered.length && <div style={{ fontSize: 12, color: "#94a3b8" }}>No matches</div>}
+      </div>
+      <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
+        <button onClick={clearAll} style={{ ...inputCss, width: "auto", cursor: "pointer" }}>Clear</button>
+        <div style={{ fontSize: 12, color: "#64748b", alignSelf: "center" }}>
+          {selected.length ? `${selected.length} selected` : "All"}
+        </div>
       </div>
     </div>
   );

@@ -614,9 +614,12 @@ export default function LeversSection({
   setPendoAnnualCost,
 
   // NEW filters + colors
+    // NEW filters + colors
   pboFilter = "All",
   moduleFilter = "All Pendo Modules",
-  useCaseFilter = "All Use Cases",
+  useCaseFilters = [],            // array of strings
+  problemFilters = [],            // array of strings (passed for visibility logic)
+  allowedLevers = new Set(),      // from parent: which lever ids are allowed by Problem/Use Case
   pboColors = {},
 }) {
   const valuesById = {
@@ -647,17 +650,29 @@ export default function LeversSection({
     aiRiskMitigation: aiRiskMitigationSavings,
   };
 
-  const matchesPbo = (lever) => pboFilter === "All" || lever.pbo === pboFilter;
+  const matchesPbo = (lever) =>
+  !pboFilter || pboFilter === "All" || lever.pbo === pboFilter;
   const matchesModule = (lever) =>
     moduleFilter === "All Pendo Modules" || (lever.modules || []).includes(moduleFilter);
-  const matchesUseCase = (lever) =>
-    useCaseFilter === "All Use Cases" || (lever.useCases || []).includes(useCaseFilter);
+    const matchesUseCases = (lever) => {
+    if (!useCaseFilters.length) return true; // no UC filter means all
+    const ucs = new Set(lever.useCases || []);
+    return useCaseFilters.some(uc => ucs.has(uc));
+  };
+
+  const matchesAllowedLevers = (lever) => {
+    // If parent provided a constrained set (by Problems/UCs), enforce it.
+    if (allowedLevers && allowedLevers.size) return allowedLevers.has(lever.id);
+    return true;
+  };
 
   const visibleLevers = LEVERS_META
     .filter((m) => enabled[m.id])
     .filter(matchesPbo)
     .filter(matchesModule)
-    .filter(matchesUseCase);
+    .filter(matchesUseCases)
+    .filter(matchesAllowedLevers);
+
 
   return (
     <div
