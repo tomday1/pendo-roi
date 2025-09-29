@@ -868,7 +868,7 @@ const allowedPbos = React.useMemo(() => {
       {/* Reset */}
       <button
         onClick={resetAll}
-        style={{ ...inputCss, width: 120, cursor: "pointer" }}
+        style={{ ...inputCss, ...pillLook, width: 100, cursor: "pointer" }}
       >
         Reset
       </button>
@@ -895,6 +895,7 @@ const allowedPbos = React.useMemo(() => {
         buildSnapshot={buildSnapshot}
         tab={tab}
         inputCss={inputCss}
+        pillLook={pillLook}
         sectionSelectors={["#tab-levers", "#tab-assumptions", "#tab-breakdown"]}
         tabIds={["levers", "assumptions", "summary"]}
         switchToTab={switchToTab}
@@ -987,7 +988,7 @@ const allowedPbos = React.useMemo(() => {
             { id: "levers", label: "💰 Value Levers" },
             { id: "assumptions", label: "🤔 Assumptions" },
             { id: "summary", label: "📑 Breakdown" },
-            { id: "stories", label: "🚧 Customer Stories 🚧" },
+            { id: "stories", label: "❤️ Customer Stories" },
           ].map((t) => (
             <button key={t.id} onClick={() => setTab(t.id)} style={tabBtn(tab === t.id)}>
               {t.label}
@@ -1356,7 +1357,7 @@ function MultiSelectSearch({ label, options, selected, onChange, placeholder = "
         placeholder={placeholder}
         style={{ ...inputCss, width: 260 }}
       />
-      <div style={{ maxHeight: 220, overflow: "auto", marginTop: 6, border: "1px solid #e5e7eb", borderRadius: 12, padding: 8, background: "#fff", width: 260 }}>
+      <div style={{ maxHeight: 400, overflow: "auto", marginTop: 6, border: "1px solid #e5e7eb", borderRadius: 12, padding: 8, background: "#fff", width: 300 }}>
         {filtered.map((opt) => {
           const isChecked = selected.includes(opt);
           return (

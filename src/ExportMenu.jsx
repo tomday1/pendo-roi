@@ -74,6 +74,7 @@ export default function ExportMenu({
   buildSnapshot,
   tab,
   inputCss,
+  pillLook,
   sectionSelectors = [],
   switchToTab,
   tabIds = ["levers", "assumptions", "summary"],
@@ -228,7 +229,7 @@ export default function ExportMenu({
         onClick={() => setOpen((v) => !v)}
         aria-label="Export"
         title="Export"
-        style={{ ...inputCss, width: 44, cursor: "pointer", display: "grid", placeItems: "center" }}
+        style={{ ...inputCss, ...pillLook, width: 44, cursor: "pointer", display: "grid", placeItems: "center" }}
       >
         ⬇️
       </button>
