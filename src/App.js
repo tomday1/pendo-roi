@@ -7,7 +7,7 @@ function App() {
   return (
     <div className="App">
       <PendoInit />
-      <PendoValueCalculator />;
+      <PendoValueCalculator />
     </div>
   );
 }
