@@ -4,6 +4,7 @@ import LeversSection, { LEVERS_META } from "./sections/LeversSection";
 import AssumptionsSection from "./sections/AssumptionsSection";
 import SummarySection from "./sections/SummarySection";
 import CustomerStoriesSection from "./sections/CustomerStoriesSection";
+import pendoLogo from "./assets/pendo.png";
 
 
 // --- Tiny style system (no external UI libs) ---
@@ -663,9 +664,9 @@ const allowedPbos = React.useMemo(() => {
       />
     ) : null}
     <img
-      src="/pendo.png"
-      alt="Pendo"
-      style={{ height: 100, width: 100, objectFit: "contain", flexShrink: 0 }}
+    src={pendoLogo}
+    alt="Pendo"
+    style={{ height: 100, width: 100, objectFit: "contain", flexShrink: 0 }}
     />
     <h1
       style={{

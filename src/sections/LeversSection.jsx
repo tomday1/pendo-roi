@@ -698,186 +698,98 @@ export default function LeversSection({
     .filter(matchesUseCases)
     .filter(matchesAllowedLevers);
 
-
   return (
-    <div
-      id="tab-levers"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
-        gap: 16,
-        marginTop: 16,
-      }}
-    >
+    <div id="tab-levers" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: 16, marginTop: 16 }}>
       {visibleLevers.map((m) => {
         switch (m.id) {
+          // --- Analytics (unchanged labels) ---
           case "analytics":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
-                info={
-                  <>
-                    <div>
-                      <code>
-                        Analytics savings = users × (cost/user/year) × optimization%
-                      </code>
-                    </div>
-                  </>
-                }
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
+                info={<div><code>Analytics savings = users × (cost/user/year) × optimization%</code></div>}
               >
-                <NumInput
-                  label="Users with analytics licenses"
-                  value={analyticsUsers}
-                  onChange={setAnalyticsUsers}
-                />
-                <CurrencyInput
-                  label="License cost per user / month"
-                  value={licenseCostPerUserMo}
-                  onChange={setLicenseCostPerUserMo}
-                  currency={currency}
-                />
-                <RangeInput
-                  label={`Optimization rate (${pctFmt(licenseOptPct)})`}
-                  value={licenseOptPct}
-                  onChange={setLicenseOptPct}
-                  step={0.01}
-                  min={0}
-                  max={0.6}
-                />
+                <NumInput label="Users with analytics licenses" value={analyticsUsers} onChange={setAnalyticsUsers} />
+                <CurrencyInput label="License cost per user / month" value={licenseCostPerUserMo} onChange={setLicenseCostPerUserMo} currency={currency} />
+                <RangeInput label={`Optimization rate (${pctFmt(licenseOptPct)})`} value={licenseOptPct} onChange={setLicenseOptPct} step={0.01} min={0} max={0.6} />
               </ModuleCard>
             );
+
+          // --- Guides (unchanged: already / year) ---
           case "guides":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Guides savings = emails shifted × cost/email</code></div>}
               >
-                <NumInput
-                  label="# of emails shifted to Guides / yr"
-                  value={emailsDeflected}
-                  onChange={setEmailsDeflected}
-                />
-                <CurrencyInput
-                  label="Cost per email avoided"
-                  value={emailCost}
-                  onChange={setEmailCost}
-                  currency={currency}
-                />
+                <NumInput label="# of emails shifted to Guides / year" value={emailsDeflected} onChange={setEmailsDeflected} />
+                <CurrencyInput label="Cost per email avoided" value={emailCost} onChange={setEmailCost} currency={currency} />
               </ModuleCard>
             );
+
+          // --- Listen (unchanged: already / year) ---
           case "listen":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Feedback savings = feedback count × saving per feedback</code></div>}
               >
-                <NumInput label="# of feedback items / yr" value={feedbackCount} onChange={setFeedbackCount} />
+                <NumInput label="# of feedback items / year" value={feedbackCount} onChange={setFeedbackCount} />
                 <CurrencyInput label="Saving per feedback" value={feedbackUnitCost} onChange={setFeedbackUnitCost} currency={currency} />
               </ModuleCard>
             );
+
+          // --- Surveys (unchanged: already / year) ---
           case "surveys":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Survey savings = surveys via Pendo × saving per survey</code></div>}
               >
-                <NumInput label="# of surveys via Pendo / yr" value={surveyCount} onChange={setSurveyCount} />
+                <NumInput label="# of surveys via Pendo / year" value={surveyCount} onChange={setSurveyCount} />
                 <CurrencyInput label="Saving per survey" value={surveyUnitCost} onChange={setSurveyUnitCost} currency={currency} />
               </ModuleCard>
             );
+
+          // --- Replay (unchanged: already / year) ---
           case "replay":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
-                info={
-                  <div>
-                    <div><code>Replay savings = total replays × useful% × saving per useful replay</code></div>
-                  </div>
-                }
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
+                info={<div><code>Replay savings = total replays × useful% × saving per useful replay</code></div>}
               >
-                <NumInput label="Total replays captured / yr" value={totalReplays} onChange={setTotalReplays} />
+                <NumInput label="Total replays captured / year" value={totalReplays} onChange={setTotalReplays} />
                 <RangeInput label={`Replays used for fixes (${pctFmt(replayUsefulPct)})`} value={replayUsefulPct} onChange={setReplayUsefulPct} step={0.01} min={0} max={0.8} />
                 <CurrencyInput label="Saving per useful replay" value={replayUnitSaving} onChange={setReplayUnitSaving} currency={currency} />
               </ModuleCard>
             );
+
+          // --- Onboarding (unchanged: already / year and clear) ---
           case "onboarding":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
-                info={
-                  <>
-                    <div><code>Onboarding savings = users × baseline hours × reduction% × $/hr × recapture%</code></div>
-                  </>
-                }
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
+                info={<div><code>Onboarding savings = users × baseline hours × reduction% × $/hr × recapture%</code></div>}
               >
-                <NumInput label="Users onboarded / yr" value={onUsers} onChange={setOnUsers} />
+                <NumInput label="Users onboarded / year" value={onUsers} onChange={setOnUsers} />
                 <NumInput label="Hours onboarding (baseline)" value={onHoursBase} onChange={setOnHoursBase} step={0.25} />
                 <RangeInput label={`Time reduction (${pctFmt(onReduction)})`} value={onReduction} onChange={setOnReduction} />
                 <CurrencyInput label="Hourly cost" value={onHrCost} onChange={setOnHrCost} currency={currency} />
                 <RangeInput label={`Productivity recapture (${pctFmt(onRecap)})`} value={onRecap} onChange={setOnRecap} />
               </ModuleCard>
             );
+
+          // --- Product Efficiency (unchanged) ---
           case "productEff":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Efficiency savings = roles × fully burdened cost/yr × efficiency uplift%</code></div>}
               >
                 <NumInput label="# of PM/Design/Analyst roles" value={pteCount} onChange={setPteCount} />
-                <CurrencyInput label="Fully burdened cost per person / yr" value={pteCost} onChange={setPteCost} currency={currency} />
+                <CurrencyInput label="Fully burdened cost per person / year" value={pteCost} onChange={setPteCost} currency={currency} />
                 <RangeInput label={`Efficiency uplift (${pctFmt(ptePct)})`} value={ptePct} onChange={setPtePct} max={0.2} />
               </ModuleCard>
             );
+
+          // --- Tickets (unchanged: labels already annual where needed) ---
           case "tickets":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
-                info={
-                  <>
-                    <div><code>Deflection savings = avoided tickets × hrs/ticket × $/hr × recapture%</code></div>
-                    <div><code>Faster handling = remaining × hrs × time reduction% × $/hr × recapture%</code></div>
-                  </>
-                }
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
+                info={<><div><code>Deflection savings = avoided tickets × hrs/ticket × $/hr × recapture%</code></div><div><code>Faster handling = remaining × hrs × time reduction% × $/hr × recapture%</code></div></>}
               >
                 <NumInput label="Tickets per year (baseline)" value={tdBase} onChange={setTdBase} />
                 <RangeInput label={`Deflection rate (${pctFmt(tdDeflect)})`} value={tdDeflect} onChange={setTdDeflect} />
@@ -887,33 +799,25 @@ export default function LeversSection({
                 <RangeInput label={`Faster handling on remaining (${pctFmt(tdTimeReduction)})`} value={tdTimeReduction} onChange={setTdTimeReduction} />
               </ModuleCard>
             );
+
+          // --- Trial Uplift (UPDATED) ---
           case "trialUplift":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Revenue = trials × base% × uplift% × ARPA/mo × 12 × GM%</code></div>}
               >
-                <NumInput label="# of trials" value={plgTrials} onChange={setPlgTrials} />
+                <NumInput label="# of trials / year" value={plgTrials} onChange={setPlgTrials} />
                 <RangeInput label={`Base conversion (${pctFmt(plgBaseConv)})`} value={plgBaseConv} onChange={setPlgBaseConv} max={1} />
                 <RangeInput label={`Uplift (${pctFmt(plgUplift)})`} value={plgUplift} onChange={setPlgUplift} max={0.5} />
                 <CurrencyInput label="ARPA / month" value={plgArpaMo} onChange={setPlgArpaMo} currency={currency} />
                 <RangeInput label={`Gross margin (${pctFmt(plgGM)})`} value={plgGM} onChange={setPlgGM} max={1} />
               </ModuleCard>
             );
+
+          // --- Expansion (unchanged) ---
           case "expansion":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Revenue = eligible × (post - pre) × price/mo × 12 × GM%</code></div>}
               >
                 <NumInput label="Users eligible" value={expEligible} onChange={setExpEligible} />
@@ -923,23 +827,14 @@ export default function LeversSection({
                 <RangeInput label={`Gross margin (${pctFmt(expGM)})`} value={expGM} onChange={setExpGM} max={1} />
               </ModuleCard>
             );
+
+          // --- MTTR (UPDATED) ---
           case "mttr":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
-                info={
-                  <>
-                    <div><code>Ops savings = (hrs before - hrs after) × tickets × $/hr × recapture%</code></div>
-                    <div><code>Revenue protected = (MTTR before - after) × incidents × $/hr at risk</code></div>
-                  </>
-                }
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
+                info={<><div><code>Ops savings = (hrs before - hrs after) × tickets × $/hr × recapture%</code></div><div><code>Revenue protected = (MTTR before - after) × incidents × $/hr at risk</code></div></>}
               >
-                <NumInput label="# of tickets" value={mttrTickets} onChange={setMttrTickets} />
+                <NumInput label="# of tickets / year" value={mttrTickets} onChange={setMttrTickets} />
                 <NumInput label="Hours before" value={mttrBeforeH} onChange={setMttrBeforeH} step={0.25} />
                 <NumInput label="Hours after" value={mttrAfterH} onChange={setMttrAfterH} step={0.25} />
                 <CurrencyInput label="Ops cost / hour" value={mttrCostHr} onChange={setMttrCostHr} currency={currency} />
@@ -951,82 +846,62 @@ export default function LeversSection({
                 <CurrencyInput label="Revenue / hour at risk" value={revPerHourAtRisk} onChange={setRevPerHourAtRisk} currency={currency} />
               </ModuleCard>
             );
+
+          // --- Research (UPDATED) ---
           case "research":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Research savings = recruits × panel cost + hours saved × $/hr</code></div>}
               >
-                <NumInput label="# of recruits" value={resRecruits} onChange={setResRecruits} />
+                <NumInput label="# of recruits / year" value={resRecruits} onChange={setResRecruits} />
                 <CurrencyInput label="Panel cost per recruit" value={resPanelCost} onChange={setResPanelCost} currency={currency} />
-                <NumInput label="Research hours saved" value={resHoursSaved} onChange={setResHoursSaved} />
+                <NumInput label="Research hours saved / year" value={resHoursSaved} onChange={setResHoursSaved} />
                 <CurrencyInput label="Cost / hour" value={resCostHr} onChange={setResCostHr} currency={currency} />
               </ModuleCard>
             );
+
+          // --- Training (unchanged: already explicit) ---
           case "training":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Training savings = formal hours × reduction% × $/hr + travel avoided</code></div>}
               >
-                <NumInput label="Formal training hours / yr" value={trainHoursFormal} onChange={setTrainHoursFormal} />
+                <NumInput label="Formal training hours / year" value={trainHoursFormal} onChange={setTrainHoursFormal} />
                 <RangeInput label={`Hours reduced (${pctFmt(trainReduction)})`} value={trainReduction} onChange={setTrainReduction} max={1} />
                 <CurrencyInput label="Cost / hour" value={trainCostHr} onChange={setTrainCostHr} currency={currency} />
                 <CurrencyInput label="Travel/venue avoided" value={trainTravelAvoided} onChange={setTrainTravelAvoided} currency={currency} />
               </ModuleCard>
             );
+
+          // --- Consolidation (UPDATED) ---
           case "consolidation":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Consolidation = retired tool cost + (admin hours × $/hr)</code></div>}
               >
                 <CurrencyInput label="Retired tool cost (annual)" value={consRetiredCost} onChange={setConsRetiredCost} currency={currency} />
-                <NumInput label="Admin hours saved" value={consAdminHours} onChange={setConsAdminHours} />
+                <NumInput label="Admin hours saved / year" value={consAdminHours} onChange={setConsAdminHours} />
                 <CurrencyInput label="Admin cost / hour" value={consAdminCostHr} onChange={setConsAdminCostHr} currency={currency} />
               </ModuleCard>
             );
+
+          // --- App Store (UPDATED) ---
           case "appStore":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Revenue = (CVR after - before) × store traffic × ARPU/year</code></div>}
               >
-                <NumInput label="Store traffic (visits)" value={appTraffic} onChange={setAppTraffic} />
+                <NumInput label="Store traffic / year (visits)" value={appTraffic} onChange={setAppTraffic} />
                 <RangeInput label={`CVR before (${(appCvrBefore * 100).toFixed(1)}%)`} value={appCvrBefore} onChange={setAppCvrBefore} max={1} />
                 <RangeInput label={`CVR after (${(appCvrAfter * 100).toFixed(1)}%)`} value={appCvrAfter} onChange={setAppCvrAfter} max={1} />
                 <CurrencyInput label="ARPU / user / year" value={appArpuYear} onChange={setAppArpuYear} currency={currency} />
               </ModuleCard>
             );
+
+          // --- Churn (unchanged: labels already explicit) ---
           case "churn":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Retained = (churn base - post) × accounts × ARPA/year × GM%</code></div>}
               >
                 <NumInput label="Accounts exposed" value={crAccts} onChange={setCrAccts} />
@@ -1036,37 +911,24 @@ export default function LeversSection({
                 <RangeInput label={`Gross margin (${pctFmt(crGM)})`} value={crGM} onChange={setCrGM} max={1} />
               </ModuleCard>
             );
+
+          // --- Release (UPDATED) ---
           case "release":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
-                info={
-                  <div>
-                    <div><code>Hotfix savings = hotfixes avoided × cost/hotfix</code></div>
-                    <div><code>Bug fix savings = bug hours saved × $/hr</code></div>
-                  </div>
-                }
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
+                info={<div><div><code>Hotfix savings = hotfixes avoided × cost/hotfix</code></div><div><code>Bug fix savings = bug hours saved × $/hr</code></div></div>}
               >
-                <NumInput label="# hotfixes avoided" value={relHotfixesAvoided} onChange={setRelHotfixesAvoided} />
+                <NumInput label="# hotfixes avoided / year" value={relHotfixesAvoided} onChange={setRelHotfixesAvoided} />
                 <CurrencyInput label="Cost per hotfix" value={relCostPerHotfix} onChange={setRelCostPerHotfix} currency={currency} />
-                <NumInput label="Bug hours saved" value={relBugHoursSaved} onChange={setRelBugHoursSaved} />
+                <NumInput label="Bug hours saved / year" value={relBugHoursSaved} onChange={setRelBugHoursSaved} />
                 <CurrencyInput label="Cost / hour" value={relCostHr} onChange={setRelCostHr} currency={currency} />
               </ModuleCard>
             );
+
+          // --- Sunsetting (unchanged: already explicit) ---
           case "sunsetting":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Sunsetting = (eng hours × sprints × $/hr) + infra avoided</code></div>}
               >
                 <NumInput label="Eng. hours / sprint on feature" value={sunEngHoursPerSprint} onChange={setSunEngHoursPerSprint} />
@@ -1075,15 +937,11 @@ export default function LeversSection({
                 <CurrencyInput label="Infra cost avoided" value={sunInfraAvoided} onChange={setSunInfraAvoided} currency={currency} />
               </ModuleCard>
             );
+
+          // --- Compliance (unchanged: already annual impact) ---
           case "compliance":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Expected = probability × impact × reduction%</code></div>}
               >
                 <RangeInput label={`Incident probability (${pctFmt(compProb)})`} value={compProb} onChange={setCompProb} max={1} />
@@ -1091,15 +949,11 @@ export default function LeversSection({
                 <RangeInput label={`Reduction from nudges (${pctFmt(compReduction)})`} value={compReduction} onChange={setCompReduction} max={1} />
               </ModuleCard>
             );
+
+          // --- License Compliance (unchanged) ---
           case "licenseCompliance":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Savings = max(0, inactive - buffer) × cost/seat</code></div>}
               >
                 <NumInput label="Inactive >90d" value={lcInactive} onChange={setLcInactive} />
@@ -1107,118 +961,87 @@ export default function LeversSection({
                 <CurrencyInput label="Cost per seat" value={lcCostSeat} onChange={setLcCostSeat} currency={currency} />
               </ModuleCard>
             );
+
+          // --- Comms CPM (UPDATED) ---
           case "commsCPM":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Savings = (emails/1000 × CPM) + (hours × $/hr)</code></div>}
               >
-                <NumInput label="Emails avoided" value={cpmEmailsAvoided} onChange={setCpmEmailsAvoided} />
+                <NumInput label="Emails avoided / year" value={cpmEmailsAvoided} onChange={setCpmEmailsAvoided} />
                 <CurrencyInput label="CPM (per 1,000 emails)" value={cpmRate} onChange={setCpmRate} currency={currency} />
-                <NumInput label="Hours avoided (creative/QA)" value={cpmHoursAvoided} onChange={setCpmHoursAvoided} />
+                <NumInput label="Hours avoided (creative/QA) / year" value={cpmHoursAvoided} onChange={setCpmHoursAvoided} />
                 <CurrencyInput label="Cost / hour" value={cpmCostHr} onChange={setCpmCostHr} currency={currency} />
               </ModuleCard>
             );
+
+          // --- AI Adoption (unchanged) ---
           case "aiAdoption":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Revenue = eligible × (post - pre) × price/mo × 12 × GM%</code></div>}
               >
                 <NumInput label="Eligible users" value={aiEligible} onChange={setAiEligible} />
-                <RangeInput label={`Adoption pre (${(aiPre*100).toFixed(0)}%)`} value={aiPre} onChange={setAiPre} max={1} />
-                <RangeInput label={`Adoption post (${(aiPost*100).toFixed(0)}%)`} value={aiPost} onChange={setAiPost} max={1} />
+                <RangeInput label={`Adoption pre (${(aiPre * 100).toFixed(0)}%)`} value={aiPre} onChange={setAiPre} max={1} />
+                <RangeInput label={`Adoption post (${(aiPost * 100).toFixed(0)}%)`} value={aiPost} onChange={setAiPost} max={1} />
                 <CurrencyInput label="AI add-on price / month" value={aiPriceMo} onChange={setAiPriceMo} currency={currency} />
-                <RangeInput label={`Gross margin (${(aiGM*100).toFixed(0)}%)`} value={aiGM} onChange={setAiGM} max={1} />
+                <RangeInput label={`Gross margin (${(aiGM * 100).toFixed(0)}%)`} value={aiGM} onChange={setAiGM} max={1} />
               </ModuleCard>
             );
 
+          // --- AI Productivity (unchanged: already per year) ---
           case "aiProductivity":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Savings = roles × fully burdened cost/yr × efficiency uplift%</code></div>}
               >
                 <NumInput label="# roles impacted" value={aiRoles} onChange={setAiRoles} />
-                <CurrencyInput label="Fully burdened cost / role / yr" value={aiRoleCost} onChange={setAiRoleCost} currency={currency} />
-                <RangeInput label={`Efficiency uplift (${(aiEffPct*100).toFixed(0)}%)`} value={aiEffPct} onChange={setAiEffPct} max={0.25} />
+                <CurrencyInput label="Fully burdened cost / role / year" value={aiRoleCost} onChange={setAiRoleCost} currency={currency} />
+                <RangeInput label={`Efficiency uplift (${(aiEffPct * 100).toFixed(0)}%)`} value={aiEffPct} onChange={setAiEffPct} max={0.25} />
               </ModuleCard>
             );
 
+          // --- AI Support Deflection (unchanged: already "per year") ---
           case "aiSupportDeflection":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Savings = avoided tickets × hrs/ticket × $/hr × recapture%</code></div>}
               >
                 <NumInput label="Tickets per year (baseline)" value={aiBaseTickets} onChange={setAiBaseTickets} />
-                <RangeInput label={`Deflection rate (${(aiDeflect*100).toFixed(0)}%)`} value={aiDeflect} onChange={setAiDeflect} />
+                <RangeInput label={`Deflection rate (${(aiDeflect * 100).toFixed(0)}%)`} value={aiDeflect} onChange={setAiDeflect} />
                 <NumInput label="Hours per ticket" value={aiHrs} onChange={setAiHrs} step={0.25} />
                 <CurrencyInput label="Cost per hour" value={aiCostHr} onChange={setAiCostHr} currency={currency} />
-                <RangeInput label={`Time recapture (${(aiRecap*100).toFixed(0)}%)`} value={aiRecap} onChange={setAiRecap} />
+                <RangeInput label={`Time recapture (${(aiRecap * 100).toFixed(0)}%)`} value={aiRecap} onChange={setAiRecap} />
               </ModuleCard>
             );
 
+          // --- AI Risk Mitigation (unchanged: annual impact) ---
           case "aiRiskMitigation":
             return (
-              <ModuleCard
-                key={m.id}
-                title={m.title}
-                description={m.description}
-                value={valuesById[m.id]}
-                currency={currency}
-                cardBg={pboColors[m.pbo]}
+              <ModuleCard key={m.id} title={m.title} description={m.description} value={valuesById[m.id]} currency={currency} cardBg={pboColors[m.pbo]}
                 info={<div><code>Expected = probability × impact × reduction%</code></div>}
               >
-                <RangeInput label={`Incident probability (${(aiProb*100).toFixed(0)}%)`} value={aiProb} onChange={setAiProb} max={1} />
+                <RangeInput label={`Incident probability (${(aiProb * 100).toFixed(0)}%)`} value={aiProb} onChange={setAiProb} max={1} />
                 <CurrencyInput label="Impact (annual)" value={aiImpact} onChange={setAiImpact} currency={currency} />
-                <RangeInput label={`Reduction from AI insights (${(aiReduction*100).toFixed(0)}%)`} value={aiReduction} onChange={setAiReduction} max={1} />
+                <RangeInput label={`Reduction from AI insights (${(aiReduction * 100).toFixed(0)}%)`} value={aiReduction} onChange={setAiReduction} max={1} />
               </ModuleCard>
             );
-            default:
+
+          default:
             return null;
         }
       })}
 
-      {/* Always include cost of Pendo card */}
-      <ModuleCard
-        title="Cost of Pendo"
-        description="Enter your annual investment to compute ROI & payback."
-        value={-pendoAnnualCost}
-        currency={currency}
-        cardBg={"#ff4775"}
+      {/* Cost of Pendo card unchanged */}
+      <ModuleCard title="Cost of Pendo" description="Enter your annual investment to compute ROI & payback." value={-pendoAnnualCost} currency={currency} cardBg={"#ff4775"}
         info={<div><code>Entered directly; subtracts from total benefits to get net value</code></div>}
       >
-        <CurrencyInput
-          label="Pendo annual cost"
-          value={pendoAnnualCost}
-          onChange={setPendoAnnualCost}
-          currency={currency}
-        />
+        <CurrencyInput label="Pendo annual cost" value={pendoAnnualCost} onChange={setPendoAnnualCost} currency={currency} />
       </ModuleCard>
     </div>
   );
 }
+
 
 // ---------- Multi-select subcomponent (kept same API) ----------
 LeversSection.MultiSelect = function MultiSelect({ enabled, toggleLever }) {
