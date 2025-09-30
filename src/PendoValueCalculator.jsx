@@ -4,7 +4,6 @@ import LeversSection, { LEVERS_META } from "./sections/LeversSection";
 import AssumptionsSection from "./sections/AssumptionsSection";
 import SummarySection from "./sections/SummarySection";
 import CustomerStoriesSection from "./sections/CustomerStoriesSection";
-import pendoLogo from "./assets/pendo.png";
 
 
 // --- Tiny style system (no external UI libs) ---
@@ -664,7 +663,7 @@ const allowedPbos = React.useMemo(() => {
       />
     ) : null}
     <img
-    src={pendoLogo}
+    src="https://cdn.iconscout.com/icon/free/png-512/free-pendo-icon-svg-download-png-10439208.png"
     alt="Pendo"
     style={{ height: 100, width: 100, objectFit: "contain", flexShrink: 0 }}
     />
@@ -1428,9 +1427,6 @@ function SettingsModal({ initialUrl, onSave, onClose }) {
             onChange={(e) => setUrl(e.target.value)}
             style={inputCss}
           />
-          <div style={{ fontSize: 12, color: "#64748b", marginTop: 6 }}>
-            Leave blank to hide the custom logo.
-          </div>
         </div>
         <div
           style={{
