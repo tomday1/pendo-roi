@@ -663,7 +663,7 @@ const allowedPbos = React.useMemo(() => {
       />
     ) : null}
     <img
-    src="https://cdn.iconscout.com/icon/free/png-512/free-pendo-icon-svg-download-png-10439208.png"
+    src="https://cdn.builder.io/api/v1/image/assets%2F6a96e08774184353b3aa88032e406411%2Fbd51e370ecda496498d96c17e3a31034?format=webp"
     alt="Pendo"
     style={{ height: 100, width: 100, objectFit: "contain", flexShrink: 0 }}
     />
