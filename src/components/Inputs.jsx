@@ -1,72 +1,55 @@
 import React from "react";
-import { inputCss, labelCss } from "../styles";
-import { num } from "../utils/format";
+import { supabase } from "../utils/supabaseClient";
+import { useAuth } from "../auth/AuthProvider";
 
-export function NumInput({ label, value, onChange, step = 1 }) {
-  return (
-    <div>
-      <div style={labelCss}>{label}</div>
-      <input
-        inputMode="numeric"
-        type="number"
-        step={step}
-        value={Number.isFinite(value) ? value : 0}
-        onChange={(e) => onChange(num(e.target.value, 0))}
-        style={inputCss}
-      />
-    </div>
-  );
-}
+export default function Login() {
+  const { setGuestMode } = useAuth();
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState("");
+  const [busy, setBusy] = React.useState(false);
 
-export function CurrencyInput({ label, value, onChange, currency = "GBP", disabled = false }) {
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    setError("");
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setBusy(false);
+    if (error) setError(error.message);
+  };
+
   return (
-    <div>
-      <div style={labelCss}>{label}</div>
-      <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: 8 }}>
-        <div
-          style={{
-            border: "1px solid #e5e7eb",
-            borderRadius: 12,
-            padding: "8px 10px",
-            background: "#f8fafc",
-            fontSize: 12,
-            color: "#475569",
-            minWidth: 58,
-            textAlign: "center",
-          }}
-        >
-          {currency}
+    <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "#f8fafc" }}>
+      <form onSubmit={onSubmit} style={{ background: "#fff", padding: 24, borderRadius: 16, width: 360, boxShadow: "0 6px 16px rgba(0,0,0,0.08)", border: "1px solid #e5e7eb" }}>
+        <h2 style={{ marginTop: 0, marginBottom: 12 }}>Sign in</h2>
+
+        <label style={{ fontSize: 12, color: "#475569" }}>Email</label>
+        <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+               style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid #e5e7eb", marginBottom: 10 }} />
+
+        <label style={{ fontSize: 12, color: "#475569" }}>Password</label>
+        <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
+               style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid #e5e7eb", marginBottom: 12 }} />
+
+        {error && <div style={{ color: "#b91c1c", fontSize: 12, marginBottom: 12 }}>{error}</div>}
+
+        <button type="submit" disabled={busy}
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid #e5e7eb", background: "#fff", cursor: "pointer" }}>
+          {busy ? "Signing in…" : "Sign in"}
+        </button>
+
+        {/* NEW: guest mode */}
+        <div style={{ display: "grid", gap: 8, marginTop: 12 }}>
+          <div style={{ textAlign: "center", fontSize: 12, color: "#94a3b8" }}>— or —</div>
+          <button
+            type="button"
+            onClick={() => setGuestMode(true)}
+            style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid #e5e7eb", background: "#fff", cursor: "pointer" }}
+          >
+            Continue as guest
+          </button>
         </div>
-        <input
-          inputMode="decimal"
-          type="number"
-          step={0.01}
-          value={Number.isFinite(value) ? value : 0}
-          onChange={(e) => onChange(num(e.target.value, 0))}
-          style={{ ...inputCss, opacity: disabled ? 0.6 : 1 }}
-          disabled={disabled}
-        />
-      </div>
-    </div>
-  );
-}
-
-export function RangeInput({ label, value, onChange, step = 0.01, min = 0, max = 1 }) {
-  return (
-    <div>
-      <div style={{ ...labelCss, display: "flex", justifyContent: "space-between" }}>
-        <span>{label}</span>
-        <span>{(value * 100).toFixed(0)}%</span>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(num(e.target.value, 0))}
-        style={{ width: "100%" }}
-      />
+      </form>
     </div>
   );
 }
