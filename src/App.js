@@ -21,7 +21,7 @@ function Shell() {
         style={{
           position: "fixed",
           top: 10,
-          right: 10,
+          right: 80,
           display: "flex",
           gap: 8,
           fontSize: 12,
