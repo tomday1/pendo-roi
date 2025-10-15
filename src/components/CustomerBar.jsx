@@ -167,8 +167,6 @@ export default function CustomerBar({
         marginBottom: 8,
       }}
     >
-      <div style={{ fontSize: 12, color: "#475569" }}>Customer: </div>
-
       <select
         value={currentCustomerId || ""}
         onChange={(e) => setCurrentCustomerId(e.target.value || null)}

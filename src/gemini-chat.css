@@ -1,0 +1,111 @@
+/* gemini-chat.css */
+
+#aiAssistantWindow {
+    display: none; /* Hidden by default */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 500px; /* Adjust size as needed */
+    height: 800px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 100000; /* Above most other elements */
+    flex-direction: column;
+}
+
+.chat-header {
+    background-color: #ff3366; /* Primary color from your theme */
+    color: white;
+    padding: 10px 15px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.chat-close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.chat-body {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-message {
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    border-radius: 18px;
+    max-width: 80%;
+    word-wrap: break-word;
+    font-size: 0.9em;
+}
+
+.chat-message.user {
+    align-self: flex-end;
+    background-color: #f0f0f0;
+    color: #333;
+    border-bottom-right-radius: 2px;
+}
+
+.chat-message.model {
+    align-self: flex-start;
+    background-color: #ff3366;
+    color: white;
+    border-bottom-left-radius: 2px;
+}
+
+.chat-footer {
+    display: flex;
+    padding: 10px 15px;
+}
+
+#chatInput {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px 0 0 20px;
+    font-size: 0.9em;
+    outline: none;
+}
+
+#sendChatBtn {
+    background-color: #ff3366; /* Success color */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 0 20px 20px 0;
+}
+
+#sendChatBtn:hover {
+    background-color: #17a673;
+}
+
+/* Typing indicator for a better UX */
+.typing-indicator {
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    border-radius: 18px;
+    max-width: fit-content;
+    background-color: #f0f0f0;
+    color: #333;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {opacity: 0.5;}
+    50% {opacity: 1;}
+    100% {opacity: 0.5;}
+}

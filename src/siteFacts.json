@@ -1,0 +1,9 @@
+{
+  "facts": {
+    "roi.formula": { "value": "(Total Benefits − Pendo Annual Cost) / Pendo Annual Cost", "sources": ["ROI app"] },
+    "levers.count": { "value": 20, "unit": "levers", "sources": ["LeversSection.jsx"] },
+    "modules.list": { "value": ["Analytics","Guides","Listen","NPS & Surveys","Session Replay","Orchestrate","Mobile"], "sources": ["ROI app"] },
+    "kpis.list": { "value": ["Total Benefits","Net Value","ROI %","Payback (months)"], "sources": ["Summary tab"] },
+    "usecase.increaseProductAdoption": { "value": "Use in-app onboarding and guides + analytics to drive activation and feature adoption", "sources": ["ROI app"] }
+  }
+}

@@ -9,7 +9,7 @@ import {
   readAllPresets, exportPresets, importPresets
 } from "./utils/presetsStorage";
 import CustomerBar from "./components/CustomerBar";
-
+import { PROBLEM_TO_USE_CASES } from "./data/problemToUseCases";
 
 // --- Tiny style system (no external UI libs) ---
 const font = {
@@ -204,7 +204,7 @@ const PROBLEMS = [
 ];
 
 // Problem ➜ Use Cases mapping (inclusive union)
-const PROBLEM_TO_USE_CASES = {
+/*const PROBLEM_TO_USE_CASES = {
   "Low adoption": ["Increase Product Adoption", "Improve Feature Adoption – Mktg", "Increase App Retention"],
   "Poor trial conversion": ["Improve Trial Conversion Rate", "Drive Product-Led Growth – Mktg"],
   "Churn risk": ["Minimize Churn", "Reduce Churn – Revenue", "Increase App Retention", "Improve Customer Satisfaction"],
@@ -217,10 +217,16 @@ const PROBLEM_TO_USE_CASES = {
   "Revenue team productivity": ["Optimize Revenue Teams – IT", "Improve Team Productivity", "Optimize Revenue & Hiring Focus"],
   "AI adoption lag": ["Accelerate AI Adoption", "Increase Product Adoption", "Improve Trial Conversion Rate"],
   "Low NPS/CSAT": ["Understand Customer Sentiment", "Improve Customer Satisfaction", "Optimize Messaging"],
-};
+}; */
 
-export default function PendoValueCalculator({ isGuest = false }) {
+export default function PendoValueCalculator(
+  {
+  isGuest = false,
+  currentCustomerId,
+  setCurrentCustomerId,
+}) {
   const [currency, setCurrency] = useLocal("pendo.currency", "GBP");
+  const [showBot, setShowBot] = React.useState(false);
 
   // --- Global / workforce assumptions ---
   const [pmSalary, setPmSalary] = useLocal("pendo.pmSalary", 100000);
@@ -1050,8 +1056,6 @@ export default function PendoValueCalculator({ isGuest = false }) {
 // For dropdown inputs
 const [presetName, setPresetName] = React.useState("");
 const [allPresetNames, setAllPresetNames] = React.useState(Object.keys(readAllPresets()).sort());
-
-const [currentCustomerId, setCurrentCustomerId] = React.useState(null);
 
 // ---------- CAPTURE FULL MODEL ----------
 const getModelState = React.useCallback(() => ({

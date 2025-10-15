@@ -1,4 +1,4 @@
-// scripts/seed-admin.js
+// scripts/seed-admin.cjs
 // Run with: node --env-file=.env.local scripts/seed-admin.js
 import { createClient } from '@supabase/supabase-js';
 import readline from 'node:readline';
