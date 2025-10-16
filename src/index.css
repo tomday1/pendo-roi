@@ -4,9 +4,8 @@ body {
     sans-serif;
   width: 100%;
   height: 100%;
-  margin: 0;
   overflow-x: hidden;
-  overflow-y: hidden;
+  overflow-y: auto;
   scrollbar-gutter: stable both-edges; /* prevents layout shift when a scrollbar appears */
   -webkit-text-size-adjust: 100%;
 }
@@ -18,3 +17,29 @@ code {
 
 img, svg, video { max-width: 100%; height: auto; }
 pre, code { white-space: pre-wrap; word-break: break-word; }
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;         /* allow row to break onto a new line */
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: 100%;
+  overflow-x: hidden;       /* guardrail: nothing from this row can extend the page */
+}
+
+/* Crucial: flex children can actually shrink */
+.toolbar > * {
+  flex: 0 1 auto;          /* shrink if needed */
+  min-width: 0;            /* allow shrinking below content size */
+  max-width: 100%;
+}
+
+/* Long labels won’t force overflow */
+.toolbar select,
+.toolbar button {
+  max-width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

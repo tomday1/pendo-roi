@@ -8,9 +8,8 @@ const barCss = {
   display: "flex",
   alignItems: "center",
   justifyContent: "flex-end",
-  gap: 10,
+  gap: 0,
   background: "#f9fafd",
-  width: "100%",
   padding: "0px 12px",
   position: "sticky",
   top: 0,
@@ -29,8 +28,9 @@ const iconBtn = {
   cursor: "pointer",
   boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
   position: "relative",
-  right: 80,
-  margin: 4
+  right: 50,
+  marginTop: 12,
+  marginRight: 12,
 };
 
 const popover = {

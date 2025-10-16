@@ -16,7 +16,7 @@ const font = {
   fontFamily:
     "ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'",
 };
-const page = { minHeight: "100vh", background: "#f8fafc", padding: 24, ...font };
+const page = { minHeight: "100vh", background: "#f8fafc", padding: 0, ...font };
 const container = { maxWidth: 1800, margin: "0 auto" };
 const box = {
   border: "1px solid #e5e7eb",
@@ -25,7 +25,7 @@ const box = {
   background: "#fff",
   boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
 };
-const hstack = { display: "flex", alignItems: "center", gap: 12 };
+const hstack = { display: "flex", alignItems: "center", gap: 14 };
 const summaryNum = { fontSize: 22, fontWeight: 600 };
 const labelCss = { fontSize: 12, color: "#475569", marginBottom: 4 };
 const inputCss = {
@@ -1500,13 +1500,15 @@ return (
     </div>
   )}
   {/* Row 2: Tagline (left) + Filters/actions (right) */}
-  <div
+  <div  className="toolbar"
     style={{
       display: "flex",
       alignItems: "center",
-      justifyContent: "space-between",
+      justifyContent: "flex-end",
       gap: 8,
-      flexWrap: "nowrap",
+      flexWrap: "wrap",       
+      maxWidth: "100%",
+      overflowX: "hidden",  
     }}
   >
     {/* Left: tagline */}
