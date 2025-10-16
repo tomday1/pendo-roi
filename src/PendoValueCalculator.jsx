@@ -1,3 +1,4 @@
+// src/components/PendoValueCalculator.jsx
 import React, { useMemo, useState, useEffect } from "react";
 import ExportMenu from "./ExportMenu";
 import LeversSection, { LEVERS_META } from "./sections/LeversSection";
@@ -1500,7 +1501,7 @@ return (
     </div>
   )}
   {/* Row 2: Tagline (left) + Filters/actions (right) */}
-  <div  className="toolbar"
+  <div
     style={{
       display: "flex",
       alignItems: "center",
@@ -1508,7 +1509,6 @@ return (
       gap: 8,
       flexWrap: "wrap",       
       maxWidth: "100%",
-      overflowX: "hidden",  
     }}
   >
     {/* Left: tagline */}
@@ -1530,7 +1530,7 @@ return (
       
 
  {/* Problem pill  popover */}
- <div style={{ position: "relative" }}>
+ <div style={{ position: "relative"  }}>
    <FilterPill
      label="Problem"
      active={showProblem || problemFilters.length > 0}
