@@ -1,6 +1,14 @@
 // src/components/ChatPanel.jsx
 import React from "react";
 
+import {
+  trackPrompt,
+  trackResponse,
+  genMsgId,
+  setAgentId,
+  flushPendoQueue,
+} from "../utils/pendoAgent";
+
 const wrap = {
   position: "fixed",
   bottom: 10,
@@ -110,11 +118,18 @@ export default function ChatPanel({ open, onClose }) {
     localStorage.setItem("roi-scope", scope);
   }, [scope]);
 
+  React.useEffect(() => {
+  setAgentId('xS0CKvcdlzgIb_JkjQG-GVQBGYk');
+  flushPendoQueue();
+  }, []);
+
   async function send() {
     const text = q.trim();
     if (!text || busy) return;
     setQ("");
-    setMsgs((m) => [...m, { role: "user", text }]);
+    const userMsgId = genMsgId('u');
+    setMsgs((m) => [...m, { id: userMsgId, role: "user", text }]);
+    trackPrompt({ content: text, scope, messageId: userMsgId });
     setBusy(true);
 
     try {
@@ -136,6 +151,10 @@ export default function ChatPanel({ open, onClose }) {
 
       const reply = data?.text || "Sorry, I couldn’t reach the assistant.";
       setMsgs((m) => [...m, { role: "assistant", text: reply }]);
+      const pathUsed = res.headers.get('x-roi-path'); // 'kb' | 'fallback' | 'kb-nohit' | 'error'
+      const assistantMsgId = genMsgId('a');
+      setMsgs((m) => [...m, { id: assistantMsgId, role: "assistant", text: reply }]);
+      trackResponse({ content: reply, pathUsed, messageId: assistantMsgId });
     } catch (e) {
       console.error("Chat fetch failed:", e);
       setMsgs((m) => [...m, { role: "assistant", text: "Network error reaching the assistant." }]);
