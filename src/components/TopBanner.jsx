@@ -12,7 +12,7 @@ const barCss = {
   gap: 12,
   background: "#f9fafd",
   width: "100%",
-  padding: "8px 12px",
+  padding: "0px 12px",
   position: "sticky",
   top: 0,
   zIndex: 50,
@@ -20,8 +20,8 @@ const barCss = {
 };
 
 const iconBtn = {
-  height: 36,
-  width: 36,
+  height: 50,
+  width: 50,
   borderRadius: "999px",
   border: "1px solid #e5e7eb",
   background: "#fff",

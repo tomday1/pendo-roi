@@ -1,22 +1,40 @@
-// /api/chat.js  — Same-origin Vercel function (Node 18+)
-const path = require("node:path");
+// /api/chat.js — Vercel serverless (Node 18+)
 
-// ===== Config =====
+// ----- CORS (needed when the RC runs on https://app.pendo.io) -----
+const ALLOW_ORIGINS = new Set([
+  "https://app.pendo.io",             // Pendo Resource Center
+  "https://pendo-roi.vercel.app",     // your site (useful for testing the embed on your site)
+  "http://localhost:3000"             // local testing
+]);
+
+function setCors(req, res) {
+  const origin = req.headers.origin;
+  if (origin && ALLOW_ORIGINS.has(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    // If you don't use cookies/Authorization, keep credentials off.
+    // res.setHeader("Access-Control-Allow-Credentials", "true");
+  }
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+}
+
+// ----- Config -----
+const path = require("node:path");
 const ALLOW_EXTERNAL = String(process.env.ALLOW_EXTERNAL || "false").toLowerCase() === "true";
 const MODEL = process.env.GENAI_MODEL || "gemini-2.5-flash";
 
-// ===== Load KB JSONs (make sure these exist; your emitter can write them) =====
+// ----- Load KB JSONs written by your emitter (or committed under /kb) -----
 function load(rel, fallback) {
   try { return require(path.join(process.cwd(), "kb", rel)); }
   catch { return fallback; }
 }
-
 const PROBLEM_TO_USE_CASES = load("problemToUseCases.json", {});
 const PROBLEM_SYNONYMS     = load("problemSynonyms.json", {});
 const LEVER_CATALOG        = load("leverCatalog.json", {});
 const CUSTOMER_STORIES     = load("customerStories.json", []);
 
-// ===== Helpers =====
+// ----- Helpers -----
 const clean  = (s='') => s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
 const tokens = (s) => new Set(clean(s).split(' ').filter(Boolean));
 const jaccard = (a,b) => {
@@ -88,8 +106,9 @@ function renderAnswer({ problem, useCases, levers, stories }) {
   ].filter(Boolean).join('\n\n');
 }
 
-// ===== Handler =====
+// ----- Handler -----
 module.exports = async (req, res) => {
+  setCors(req, res);                          // CORS for RC
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST")  return res.status(405).json({ error: "Method not allowed" });
 
@@ -120,7 +139,7 @@ module.exports = async (req, res) => {
       });
     }
 
-    // ===== AI fallback (only when ALLOW_EXTERNAL=true) =====
+    // ===== AI fallback (only when ALLOW_EXTERNAL=true and GEMINI_API_KEY is set) =====
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return res.status(200).json({
