@@ -1,4 +1,3 @@
-// src/components/TopBanner.jsx
 import React from "react";
 import { useAuth } from "../auth/AuthProvider";
 import { supabase } from "../utils/supabaseClient";
@@ -9,7 +8,7 @@ const barCss = {
   display: "flex",
   alignItems: "center",
   justifyContent: "flex-end",
-  gap: 12,
+  gap: 10,
   background: "#f9fafd",
   width: "100%",
   padding: "0px 12px",
@@ -28,8 +27,10 @@ const iconBtn = {
   display: "grid",
   placeItems: "center",
   cursor: "pointer",
-  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",position: "relative",
+  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+  position: "relative",
   right: 80,
+  margin: 4
 };
 
 const popover = {
@@ -47,7 +48,7 @@ const popover = {
   color: "#0f172a",
 };
 
-const line = { display: "flex", justifyContent: "space-between", gap: 8, margin: "6px 0" };
+const line = { display: "flex", justifyContent: "space-between", gap: 8, margin: "6px 0", fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" };
 const label = { color: "#64748b" };
 const pill = {
   border: "1px solid #e5e7eb",
@@ -61,33 +62,27 @@ export default function TopBanner({ isGuest, currentCustomerId, onOpenBot }) {
   const { user } = useAuth();
   const [openProfile, setOpenProfile] = React.useState(false);
   const [customerName, setCustomerName] = React.useState("");
+  const wrapperRef = React.useRef(null);
+  const buttonRef = React.useRef(null);
+  const popoverId = "profile-popover";
 
   // Resolve customer name from ID
   React.useEffect(() => {
     let cancelled = false;
-
-    async function resolveName() {
+    (async () => {
       if (!currentCustomerId) {
         if (!cancelled) setCustomerName("");
         return;
       }
       try {
         const list = await listCustomers(); // expects [{ id, name }, ...]
-        const match = Array.isArray(list)
-          ? list.find((c) => c.id === currentCustomerId)
-          : null;
-        if (!cancelled) {
-          setCustomerName(match?.name || "");
-        }
+        const match = Array.isArray(list) ? list.find(c => c.id === currentCustomerId) : null;
+        if (!cancelled) setCustomerName(match?.name || "");
       } catch {
         if (!cancelled) setCustomerName("");
       }
-    }
-
-    resolveName();
-    return () => {
-      cancelled = true;
-    };
+    })();
+    return () => { cancelled = true; };
   }, [currentCustomerId]);
 
   const initials = React.useMemo(() => {
@@ -100,19 +95,61 @@ export default function TopBanner({ isGuest, currentCustomerId, onOpenBot }) {
     (user?.user_metadata && (user.user_metadata.role || user.user_metadata.Role)) ||
     "Member";
 
+  // Click outside to close
+  React.useEffect(() => {
+    function onDocDown(e) {
+      if (!openProfile) return;
+      const el = wrapperRef.current;
+      if (el && !el.contains(e.target)) setOpenProfile(false);
+    }
+    function onEsc(e) {
+      if (e.key === "Escape") setOpenProfile(false);
+    }
+    document.addEventListener("mousedown", onDocDown);
+    document.addEventListener("touchstart", onDocDown, { passive: true });
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDocDown);
+      document.removeEventListener("touchstart", onDocDown);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, [openProfile]);
+
+  async function handleSignOut() {
+    try {
+      await supabase.auth.signOut();
+      // Optional: force refresh or route to login
+      // window.location.reload();
+    } catch (e) {
+      console.error("Sign out failed", e);
+    }
+  }
+
   return (
     <div style={barCss}>
-      <div
-        style={{ position: "relative" }}
-        onMouseEnter={() => setOpenProfile(true)}
-        onMouseLeave={() => setOpenProfile(false)}
-      >
-        <button aria-label="Profile" title="Profile" style={iconBtn}>
+      {/* Profile wrapper (CLICK to toggle; no hover handlers) */}
+      <div style={{ position: "relative" }} ref={wrapperRef}>
+        <button
+          ref={buttonRef}
+          aria-label="Profile"
+          title="Profile"
+          style={iconBtn}
+          onClick={() => setOpenProfile(v => !v)}
+          aria-haspopup="menu"
+          aria-expanded={openProfile}
+          aria-controls={openProfile ? popoverId : undefined}
+        >
           <span style={{ fontWeight: 600, fontSize: 14 }}>{initials}</span>
         </button>
 
         {openProfile && (
-          <div style={popover}>
+          <div
+            id={popoverId}
+            role="menu"
+            style={popover}
+            tabIndex={-1}
+            onKeyDown={(e) => { if (e.key === "Escape") setOpenProfile(false); }}
+          >
             <div style={line}>
               <span style={label}>User</span>
               <span>{user?.email || "Guest"}</span>
@@ -138,7 +175,7 @@ export default function TopBanner({ isGuest, currentCustomerId, onOpenBot }) {
 
             {!isGuest && (
               <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 10 }}>
-                <button style={pill} onClick={() => supabase.auth.signOut()}>
+                <button style={pill} onClick={handleSignOut}>
                   Sign out
                 </button>
               </div>
