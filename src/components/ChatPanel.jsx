@@ -150,7 +150,6 @@ export default function ChatPanel({ open, onClose }) {
       }
 
       const reply = data?.text || "Sorry, I couldn’t reach the assistant.";
-      setMsgs((m) => [...m, { role: "assistant", text: reply }]);
       const pathUsed = res.headers.get('x-roi-path'); // 'kb' | 'fallback' | 'kb-nohit' | 'error'
       const assistantMsgId = genMsgId('a');
       setMsgs((m) => [...m, { id: assistantMsgId, role: "assistant", text: reply }]);
