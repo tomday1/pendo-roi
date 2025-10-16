@@ -6,7 +6,7 @@ const wrap = {
   bottom: 10,
   right: 16,
   width: 800,
-  height: "70vh",
+  height: "90vh",
   background: "#fff",
   border: "1px solid #e5e7eb",
   borderRadius: 12,
@@ -45,7 +45,7 @@ const bubble = (role) => ({
   whiteSpace: "pre-wrap",
   wordBreak: "break-word",
   alignSelf: role === "user" ? "flex-end" : "flex-start",
-  background: role === "user" ? "#f1f5f9" : "#ffe3eb",
+  background: role === "user" ? "#f1f5f9" : "#fba8c4ff",
   color: "#0f172a",
 });
 const inputBar = { padding: 10, borderTop: "1px solid #e5e7eb", display: "flex", gap: 8 };
@@ -57,7 +57,7 @@ const scopePill = (active) => ({
   borderRadius: 999,
   padding: "4px 10px",
   fontSize: 12,
-  background: active ? "#fff0f5" : "#fff",
+  background: active ? "#fba8c4ff" : "#fff",
   cursor: "pointer"
 });
 
