@@ -2,7 +2,7 @@
 // Queue-safe tracker for Pendo Conversations API (beta)
 
 const DEFAULT_AGENT_ID =
-  process.env.REACT_APP_PENDO_AGENT_ID || 'xS0CKvcdlzgIb_JkjQG-GVQBGYk';
+  process.env.REACT_APP_PENDO_AGENT_ID || 'tWtnQ5l8lGkk_EGhj94cAYOnjOE';
 
 let queue = [];
 
